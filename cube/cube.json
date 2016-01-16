@@ -1,0 +1,369 @@
+{
+  "uuid": "e1e19437-2354-4162-9511-b878004bfa94",
+  "name": "c_counts",
+  "description": "",
+  "dimensions": [
+    {
+      "id": 1,
+      "name": "CHR",
+      "table": "DWH.FACT_AGG_GENOTYPES_COUNTS_DIMS_ORC",
+      "column": [
+        "F_CHR"
+      ],
+      "derived": null,
+      "hierarchy": false
+    },
+    {
+      "id": 2,
+      "name": "VARIANT",
+      "table": "DWH.FACT_AGG_GENOTYPES_COUNTS_DIMS_ORC",
+      "column": [
+        "F_VARIANT_NAME"
+      ],
+      "derived": null,
+      "hierarchy": false
+    },
+    {
+      "id": 3,
+      "name": "POS",
+      "table": "DWH.FACT_AGG_GENOTYPES_COUNTS_DIMS_ORC",
+      "column": [
+        "F_POS"
+      ],
+      "derived": null,
+      "hierarchy": false
+    },
+    {
+      "id": 4,
+      "name": "GEO",
+      "table": "DWH.FACT_AGG_GENOTYPES_COUNTS_DIMS_ORC",
+      "column": [
+        "GEO_REGION_NAME_EN",
+        "GEO_COUNTRY_NAME_EN"
+      ],
+      "derived": null,
+      "hierarchy": true
+    },
+    {
+      "id": 5,
+      "name": "ALT",
+      "table": "DWH.FACT_AGG_GENOTYPES_COUNTS_DIMS_ORC",
+      "column": [
+        "F_ALT"
+      ],
+      "derived": null,
+      "hierarchy": false
+    },
+    {
+      "id": 6,
+      "name": "GENOTYPE",
+      "table": "DWH.FACT_AGG_GENOTYPES_COUNTS_DIMS_ORC",
+      "column": [
+        "F_GENOTYPE"
+      ],
+      "derived": null,
+      "hierarchy": false
+    },
+    {
+      "id": 7,
+      "name": "SYNONYMIC",
+      "table": "DWH.FACT_AGG_GENOTYPES_COUNTS_DIMS_ORC",
+      "column": [
+        "V_SYNONYMIC"
+      ],
+      "derived": null,
+      "hierarchy": false
+    },
+    {
+      "id": 8,
+      "name": "TRANS_ID",
+      "table": "DWH.FACT_AGG_GENOTYPES_COUNTS_DIMS_ORC",
+      "column": [
+        "GP_TRANS_ID"
+      ],
+      "derived": null,
+      "hierarchy": false
+    },
+    {
+      "id": 9,
+      "name": "EXON",
+      "table": "DWH.FACT_AGG_GENOTYPES_COUNTS_DIMS_ORC",
+      "column": [
+        "GP_EXON_NUM"
+      ],
+      "derived": null,
+      "hierarchy": false
+    },
+    {
+      "id": 10,
+      "name": "FATHMM",
+      "table": "DWH.FACT_AGG_GENOTYPES_COUNTS_DIMS_ORC",
+      "column": [
+        "V_FATHMM_PRED"
+      ],
+      "derived": null,
+      "hierarchy": false
+    },
+    {
+      "id": 11,
+      "name": "DOMIM",
+      "table": "DWH.FACT_AGG_GENOTYPES_COUNTS_DIMS_ORC",
+      "column": [
+        "D_OMIM_ID"
+      ],
+      "derived": null,
+      "hierarchy": false
+    },
+    {
+      "id": 12,
+      "name": "ENS",
+      "table": "DWH.FACT_AGG_GENOTYPES_COUNTS_DIMS_ORC",
+      "column": [
+        "F_ENSEMBL_GP_ID"
+      ],
+      "derived": null,
+      "hierarchy": false
+    }
+  ],
+  "measures": [
+    {
+      "id": 1,
+      "name": "_COUNT_",
+      "function": {
+        "expression": "COUNT",
+        "parameter": {
+          "type": "constant",
+          "value": "1"
+        },
+        "returntype": "bigint"
+      },
+      "dependent_measure_ref": null
+    },
+    {
+      "id": 2,
+      "name": "F_COUNTRY_TOTAL_SAMPLES",
+      "function": {
+        "expression": "MIN",
+        "parameter": {
+          "type": "column",
+          "value": "F_COUNTRY_TOTAL_SAMPLES"
+        },
+        "returntype": "bigint"
+      },
+      "dependent_measure_ref": null
+    },
+    {
+      "id": 3,
+      "name": "F_REGION_TOTAL_SAMPLES",
+      "function": {
+        "expression": "MIN",
+        "parameter": {
+          "type": "column",
+          "value": "F_REGION_TOTAL_SAMPLES"
+        },
+        "returntype": "bigint"
+      },
+      "dependent_measure_ref": null
+    },
+    {
+      "id": 4,
+      "name": "F_CNT_ALTER",
+      "function": {
+        "expression": "MIN",
+        "parameter": {
+          "type": "column",
+          "value": "F_CNT_ALTER"
+        },
+        "returntype": "bigint"
+      },
+      "dependent_measure_ref": null
+    },
+    {
+      "id": 5,
+      "name": "DISTINCT_VARIANT_CNT",
+      "function": {
+        "expression": "COUNT_DISTINCT",
+        "parameter": {
+          "type": "column",
+          "value": "F_VARIANT_NAME"
+        },
+        "returntype": "hllc15"
+      },
+      "dependent_measure_ref": null
+    },
+    {
+      "id": 6,
+      "name": "SUM_CNT_ALTER",
+      "function": {
+        "expression": "SUM",
+        "parameter": {
+          "type": "column",
+          "value": "F_CNT_ALTER"
+        },
+        "returntype": "bigint"
+      },
+      "dependent_measure_ref": null
+    },
+    {
+      "id": 7,
+      "name": "F_TOTAL_SAMPLES",
+      "function": {
+        "expression": "MAX",
+        "parameter": {
+          "type": "column",
+          "value": "F_TOTAL_SAMPLES"
+        },
+        "returntype": "bigint"
+      },
+      "dependent_measure_ref": null
+    },
+    {
+      "id": 8,
+      "name": "F_SUM_TOTAL_DEPTH",
+      "function": {
+        "expression": "SUM",
+        "parameter": {
+          "type": "column",
+          "value": "F_SUM_TOTAL_DEPTH"
+        },
+        "returntype": "bigint"
+      },
+      "dependent_measure_ref": null
+    }
+  ],
+  "rowkey": {
+    "rowkey_columns": [
+      {
+        "column": "F_CHR",
+        "length": 0,
+        "dictionary": "true",
+        "mandatory": false
+      },
+      {
+        "column": "F_VARIANT_NAME",
+        "length": 0,
+        "dictionary": "true",
+        "mandatory": false
+      },
+      {
+        "column": "F_POS",
+        "length": 0,
+        "dictionary": "true",
+        "mandatory": false
+      },
+      {
+        "column": "F_ALT",
+        "length": 0,
+        "dictionary": "true",
+        "mandatory": false
+      },
+      {
+        "column": "GEO_REGION_NAME_EN",
+        "length": 0,
+        "dictionary": "true",
+        "mandatory": false
+      },
+      {
+        "column": "GEO_COUNTRY_NAME_EN",
+        "length": 0,
+        "dictionary": "true",
+        "mandatory": false
+      },
+      {
+        "column": "F_GENOTYPE",
+        "length": 0,
+        "dictionary": "true",
+        "mandatory": false
+      },
+      {
+        "column": "V_SYNONYMIC",
+        "length": 0,
+        "dictionary": "true",
+        "mandatory": false
+      },
+      {
+        "column": "GP_TRANS_ID",
+        "length": 0,
+        "dictionary": "true",
+        "mandatory": false
+      },
+      {
+        "column": "GP_EXON_NUM",
+        "length": 0,
+        "dictionary": "true",
+        "mandatory": false
+      },
+      {
+        "column": "V_FATHMM_PRED",
+        "length": 0,
+        "dictionary": "true",
+        "mandatory": false
+      },
+      {
+        "column": "D_OMIM_ID",
+        "length": 0,
+        "dictionary": "true",
+        "mandatory": false
+      },
+      {
+        "column": "F_ENSEMBL_GP_ID",
+        "length": 0,
+        "dictionary": "true",
+        "mandatory": false
+      }
+    ],
+    "aggregation_groups": [
+      [
+        "F_VARIANT_NAME",
+        "F_POS",
+        "F_ALT",
+        "GEO_REGION_NAME_EN",
+        "GEO_COUNTRY_NAME_EN"
+      ]
+    ]
+  },
+  "signature": "WjUjcc5/4ewp+tcpD94/Ig==",
+  "last_modified": 1452813139072,
+  "model_name": "c_counts",
+  "null_string": null,
+  "hbase_mapping": {
+    "column_family": [
+      {
+        "name": "F1",
+        "columns": [
+          {
+            "qualifier": "M",
+            "measure_refs": [
+              "_COUNT_",
+              "F_COUNTRY_TOTAL_SAMPLES",
+              "F_REGION_TOTAL_SAMPLES",
+              "F_CNT_ALTER",
+              "SUM_CNT_ALTER",
+              "F_TOTAL_SAMPLES",
+              "F_SUM_TOTAL_DEPTH"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "F2",
+        "columns": [
+          {
+            "qualifier": "M",
+            "measure_refs": [
+              "DISTINCT_VARIANT_CNT"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "notify_list": [],
+  "auto_merge_time_ranges": [
+    604800000,
+    2419200000
+  ],
+  "retention_range": 0
+}
+
+
