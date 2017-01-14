@@ -15,7 +15,9 @@ libraryDependencies ++= Seq(
   "org.scalatest" % "scalatest_2.10" % "2.1.0-RC2" % "test",
   "org.apache.commons" % "commons-lang3" % "3.4",
   "org.apache.commons" % "commons-math3" % "3.5",
-  "org.rogach" %% "scallop" % "0.9.5"
+  "org.rogach" %% "scallop" % "0.9.5",
+  "org.apache.hive" % "hive-jdbc" % "2.1.1",
+  "com.facebook.presto" % "presto-jdbc" % "0.163"
 )
 
 resolvers += "Apache Repos" at "https://repository.apache.org/content/repositories/releases/"
