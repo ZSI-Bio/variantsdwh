@@ -9,6 +9,7 @@ import java.sql.SQLException
 import java.sql.Statement
 import java.util.Properties
 
+import pl.edu.pw.ii.zsibio.dwh.benchmark.dao.JDBCDriver.JDBCDriver
 import pl.edu.pw.ii.zsibio.dwh.benchmark.utils.ExecutionTiming;
 
 /**
@@ -16,6 +17,14 @@ import pl.edu.pw.ii.zsibio.dwh.benchmark.utils.ExecutionTiming;
   */
 
 case class QueryResult(rs:ResultSet, timing:Option[ExecutionTiming])
+
+object JDBCDriver extends Enumeration {
+
+  type JDBCDriver = Value
+  val HIVE, SPARK, IMPALA, PRESTO  = Value
+
+
+}
 
 class JDBCConnection() {
 
@@ -26,8 +35,15 @@ class JDBCConnection() {
     * @param jdbcDriverName
     * @param connectionUrl
     */
-  def connect(jdbcDriverName:String, connectionUrl:String) = {
-    Class.forName(jdbcDriverName)
+  def connect(jdbcDriverName:JDBCDriver, connectionUrl:String) = {
+
+    jdbcDriverName match {
+      case JDBCDriver.HIVE => Class.forName("org.apache.hadoop.hive.jdbc.HiveDriver")
+      case JDBCDriver.SPARK => Class.forName("org.apache.hadoop.hive.jdbc.HiveDriver")
+      case JDBCDriver.IMPALA => Class.forName("com.cloudera.impala.jdbc41.Driver")
+      case JDBCDriver.PRESTO => Class.forName("com.facebook.presto.jdbc.PrestoDriver")
+      case _ => None
+    }
 
     try {
       connection = DriverManager.getConnection(connectionUrl)
