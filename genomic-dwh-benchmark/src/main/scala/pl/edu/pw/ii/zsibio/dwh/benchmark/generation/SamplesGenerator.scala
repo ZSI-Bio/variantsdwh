@@ -1,13 +1,12 @@
-package pl.edu.pw.elka.generation
+package pl.edu.pw.ii.zsibio.dwh.benchmark.generation
 
 import java.lang
 
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Row, SQLContext}
-import pl.edu.pw.elka.generation.model.GeneratedSample
-import pl.edu.pw.elka.utils.Probability._
-
+import pl.edu.pw.ii.zsibio.dwh.benchmark.generation.model.GeneratedSample
+import pl.edu.pw.ii.zsibio.dwh.benchmark.utils.Probability._
 import scala.util.Random
 
 /**

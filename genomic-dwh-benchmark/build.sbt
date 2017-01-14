@@ -1,16 +1,16 @@
 import sbt.Keys._
 
-name := "gate-generate-samples"
+name := "genomic-dwh-benchmark"
 
 version := "1.0"
 
 scalaVersion := "2.10.5"
 
 libraryDependencies ++= Seq(
-  "org.apache.spark" %% "spark-core" % "1.4.1" % "provided",
-  "org.apache.spark" % "spark-sql_2.10" % "1.4.1" % "provided",
-  "com.databricks" % "spark-csv_2.10" % "1.3.0",
-  "org.apache.spark" % "spark-hive_2.10" % "1.4.1" % "provided",
+  "org.apache.spark" %% "spark-core" % "1.6.3" % "provided",
+  "org.apache.spark" % "spark-sql_2.10" % "1.6.3" % "provided",
+  "com.databricks" % "spark-csv_2.10" % "1.5.0",
+  "org.apache.spark" % "spark-hive_2.10" % "1.6.3" % "provided",
   "org.apache.hadoop" % "hadoop-client" % "2.6.0" % "provided",
   "org.scalatest" % "scalatest_2.10" % "2.1.0-RC2" % "test",
   "org.apache.commons" % "commons-lang3" % "3.4",

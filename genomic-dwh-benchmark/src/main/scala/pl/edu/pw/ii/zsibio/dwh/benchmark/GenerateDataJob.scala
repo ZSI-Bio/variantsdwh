@@ -1,12 +1,12 @@
-package pl.edu.pw.elka
+package pl.edu.pw.ii.zsibio.dwh.benchmark
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.{SparkConf, SparkContext}
 import org.rogach.scallop._
-import pl.edu.pw.elka.generation.{GenerationConfiguration, SamplesGenerator, DataGenerator}
-import pl.edu.pw.elka.generation.model.GeneratedSample
+import pl.edu.pw.ii.zsibio.dwh.benchmark.generation.model.GeneratedSample
+import pl.edu.pw.ii.zsibio.dwh.benchmark.generation.{DataGenerator, GenerationConfiguration, SamplesGenerator}
 
 /**
   * @author dawid

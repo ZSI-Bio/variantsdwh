@@ -1,8 +1,8 @@
-package pl.edu.pw.elka.generation
+package pl.edu.pw.ii.zsibio.dwh.benchmark.generation
 
 import org.apache.commons.math3.random.RandomDataGenerator
 import org.apache.spark.rdd.RDD
-import pl.edu.pw.elka.generation.model.{GeneratedSample, GeneratedVariant}
+import pl.edu.pw.ii.zsibio.dwh.benchmark.generation.model.{GeneratedSample, GeneratedVariant}
 
 /**
   * @author dawid
@@ -82,7 +82,7 @@ object DataGenerator {
       }
     }
 
-    import pl.edu.pw.elka.utils.Probability._
+    import pl.edu.pw.ii.zsibio.dwh.benchmark.utils.Probability._
     val af = newVariant(afColumn).asInstanceOf[Double]
     val genotypes = Seq(
       (af ** 2, "1/1")

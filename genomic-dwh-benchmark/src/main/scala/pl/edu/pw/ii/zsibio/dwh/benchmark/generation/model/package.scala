@@ -1,4 +1,4 @@
-package pl.edu.pw.elka.generation
+package pl.edu.pw.ii.zsibio.dwh.benchmark.generation
 
 /**
   * @author dawid 

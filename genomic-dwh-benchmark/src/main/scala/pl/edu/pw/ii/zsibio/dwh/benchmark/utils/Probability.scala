@@ -1,4 +1,4 @@
-package pl.edu.pw.elka.utils
+package pl.edu.pw.ii.zsibio.dwh.benchmark.utils
 
 /**
   * @author dawid 

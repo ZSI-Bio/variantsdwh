@@ -1,7 +1,7 @@
-package pl.edu.pw.elka.utils
+package pl.edu.pw.ii.zsibio.dwh.benchmark.utils
 
 import org.scalatest.{Matchers, FunSuite}
-import pl.edu.pw.elka.utils.Probability._
+import pl.edu.pw.ii.zsibio.dwh.benchmark.utils.Probability._
 
 /**
   * @author dawid 
