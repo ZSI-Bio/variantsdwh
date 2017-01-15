@@ -1,17 +1,17 @@
 ---
-query_id: DDL_HIVE_ORC_1
+queryId: DDL_HIVE_{{DATA_FORMAT}}_1
 
-type: CREATE
+queryType: CREATE
 
-desc: Create {{db_Name}}.`dim_geography_orc` table in ORC Format 
+queryEngine: Hive
 
-query:	CREATE TABLE {{db_Name}}.`dim_geography_orc`(
+queryDesc: Create {{DB_NAME}}.`dim_geography_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format 
+
+statement: CREATE TABLE IF NOT EXISTS {{DB_NAME}}.`dim_geography_{{DATA_FORMAT}}`(
    `geo_id` int,
    `geo_code` string,
    `geo_country_name_en` string,
    `geo_region_id` int,
    `geo_region_name_en` string,
    `geo_sub_region_id` int,
-   `geo_sub_region_name_en` string)
-STORED AS ORC;
-
+   `geo_sub_region_name_en` string) STORED AS {{DATA_FORMAT}}
