@@ -4,7 +4,7 @@ name := "genomic-dwh-benchmark"
 
 version := "1.0"
 
-scalaVersion := "2.10.5"
+scalaVersion := "2.10.6"
 
 enablePlugins(UniversalPlugin)
 
@@ -21,14 +21,15 @@ libraryDependencies ++= Seq(
   "org.apache.hive" % "hive-jdbc" % "1.1.0-cdh5.8.0",
   "org.apache.hadoop" % "hadoop-common" % "2.6.0",
   "com.facebook.presto" % "presto-jdbc" % "0.163",
-  "org.apache.logging.log4j" % "log4j-api" % "2.7"
+  "org.apache.logging.log4j" % "log4j-api" % "2.7",
+  "net.jcazevedo" %% "moultingyaml" % "0.4.0"
 )
 
 resolvers += "Apache Repos" at "https://repository.apache.org/content/repositories/releases/"
 
 resolvers += "CDH" at "https://repository.cloudera.com/artifactory/cloudera-repos/"
 
-mainClass in assembly := Some("pl.edu.pw.ii.zsibio.dwh.benchmark.CreateDataModelJob")
+mainClass in assembly := Some("pl.edu.pw.ii.zsibio.dwh.benchmark.ExecuteStatement")
 
 
 assemblyMergeStrategy in assembly := {
