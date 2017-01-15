@@ -1,0 +1,10 @@
+---
+queryId: QX_HIVE_{{DATA_FORMAT}}_1
+
+queryType: SELECT
+
+queryEngine: Hive
+
+queryDesc: Select count from {{DB_NAME}}.`dim_geography_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format
+
+statement: SELECT COUNT(*) FROM {{DB_NAME}}.`dim_geography_{{DATA_FORMAT}}`
