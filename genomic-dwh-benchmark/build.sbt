@@ -8,6 +8,14 @@ scalaVersion := "2.10.6"
 
 enablePlugins(UniversalPlugin)
 
+fork := true
+
+javaOptions in run ++= Seq(
+  "-Dlog4j.debug=true",
+  "-Dlog4j.configuration=log4j.properties")
+
+outputStrategy := Some(StdoutOutput)
+
 libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-core" % "1.6.3" % "provided",
   "org.apache.spark" % "spark-sql_2.10" % "1.6.3" % "provided",
