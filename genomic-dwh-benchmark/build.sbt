@@ -18,13 +18,18 @@ libraryDependencies ++= Seq(
   "org.apache.commons" % "commons-lang3" % "3.4",
   "org.apache.commons" % "commons-math3" % "3.5",
   "org.rogach" %% "scallop" % "2.0.6",
-  "org.apache.hive" % "hive-jdbc" % "2.1.1",
-  "com.facebook.presto" % "presto-jdbc" % "0.163"
+  "org.apache.hive" % "hive-jdbc" % "1.1.0-cdh5.8.0",
+  "org.apache.hadoop" % "hadoop-common" % "2.6.0",
+  "com.facebook.presto" % "presto-jdbc" % "0.163",
+  "org.apache.logging.log4j" % "log4j-api" % "2.7"
 )
 
 resolvers += "Apache Repos" at "https://repository.apache.org/content/repositories/releases/"
 
+resolvers += "CDH" at "https://repository.cloudera.com/artifactory/cloudera-repos/"
+
 mainClass in assembly := Some("pl.edu.pw.ii.zsibio.dwh.benchmark.CreateDataModelJob")
+
 
 assemblyMergeStrategy in assembly := {
   case PathList("com", "google", xs@_*) => MergeStrategy.first
