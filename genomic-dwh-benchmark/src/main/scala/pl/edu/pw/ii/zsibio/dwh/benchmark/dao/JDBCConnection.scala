@@ -10,7 +10,7 @@ import java.sql.Statement
 import java.util.Properties
 
 import pl.edu.pw.ii.zsibio.dwh.benchmark.dao.JDBCDriver.JDBCDriver
-import pl.edu.pw.ii.zsibio.dwh.benchmark.utils.ExecutionTiming;
+import pl.edu.pw.ii.zsibio.dwh.benchmark.utils.ExecutionTiming
 
 /**
   * Created by marek on 14.01.17.
@@ -35,37 +35,37 @@ class JDBCConnection() {
     * @param jdbcDriverName
     * @param connectionUrl
     */
-  def connect(jdbcDriverName:JDBCDriver, connectionUrl:String) = {
+  def open(jdbcDriverName:JDBCDriver, connectionUrl:String,userName:String="",password:String="") = {
 
     jdbcDriverName match {
-      case JDBCDriver.HIVE => Class.forName("org.apache.hadoop.hive.jdbc.HiveDriver")
-      case JDBCDriver.SPARK => Class.forName("org.apache.hadoop.hive.jdbc.HiveDriver")
+      case JDBCDriver.HIVE => Class.forName("org.apache.hive.jdbc.HiveDriver")
+      case JDBCDriver.SPARK => Class.forName("org.apache.hive.jdbc.HiveDriver")
       case JDBCDriver.IMPALA => Class.forName("com.cloudera.impala.jdbc41.Driver")
       case JDBCDriver.PRESTO => Class.forName("com.facebook.presto.jdbc.PrestoDriver")
       case _ => None
     }
 
     try {
-      connection = DriverManager.getConnection(connectionUrl)
+      connection = DriverManager.getConnection(connectionUrl,userName,password)
     }
     catch {
       case e: SQLException => e.printStackTrace()
       case e: Exception => e.printStackTrace()
     }
-      finally
+      /*finally
       {
         try {
           connection.close()
         } catch {
           case e: Exception => None
         }
-      }
+      }*/
   }
 
   /**
     * Disconnect
     */
-  def disconnect = connection.close()
+  def close = connection.close()
 
 
   /**
@@ -75,6 +75,7 @@ class JDBCConnection() {
     * @return
     */
   def executeQuery(queryString:String, timing:Boolean) : QueryResult= {
+
 
     val statement = connection.createStatement()
     val timer = if(timing) Some(new ExecutionTiming()) else None
