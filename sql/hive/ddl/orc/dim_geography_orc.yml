@@ -1,0 +1,17 @@
+---
+query_id: DDL_HIVE_ORC_1
+
+type: CREATE
+
+desc: Create {{db_Name}}.`dim_geography_orc` table in ORC Format 
+
+query:	CREATE TABLE {{db_Name}}.`dim_geography_orc`(
+   `geo_id` int,
+   `geo_code` string,
+   `geo_country_name_en` string,
+   `geo_region_id` int,
+   `geo_region_name_en` string,
+   `geo_sub_region_id` int,
+   `geo_sub_region_name_en` string)
+STORED AS ORC;
+

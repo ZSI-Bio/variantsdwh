@@ -9,7 +9,7 @@ import scala.collection.mutable.ArrayBuffer
 /**
   * Created by marek on 14.01.17.
   */
-object CreateDataModelJob {
+object ExecuteStatement {
 
 
 
@@ -27,9 +27,13 @@ object CreateDataModelJob {
       val hiveConnstring =opt[String]("hiveConnstring",required = false, descr = "Connection string for Hive Server" )
       val prestoConnstring =opt[String]("prestoConnstring",required = false, descr = "Connection string for Presto Server" )
       val impalaConnstring =opt[String]("impalaConnstring",required = false, descr = "Connection string for Impala Server" )
-      val compression =opt[String](required = false, default= Some("gzip"), descr = "Compression algorithm gzip|snappy|none" )
+      val kuduMaster =opt[String]("kuduMaster",required = false, descr = "Kudu Master URL" )
+      val compression =opt[String]("compression",required = false, default= Some("gzip"), descr = "Compression algorithm gzip|snappy|none" )
       val username =opt[String]("username",required = false, descr = "Username" )
       val password =opt[String]("password",required = false, descr = "Password" )
+      val queryFile =opt[String]("queryFile",required = false, descr = "A file containing a select statement in YAML format" )
+      val ddlFile =opt[String]("ddlFile",required = false, descr = "A file containing a DDL statement in YAML format" )
+
       verify()
     }
     val jdbcConfArray = new ArrayBuffer[(JDBCDriver, String)]()
