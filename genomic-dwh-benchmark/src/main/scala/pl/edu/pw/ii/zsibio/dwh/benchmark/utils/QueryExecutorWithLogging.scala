@@ -55,6 +55,8 @@ object QueryExecutorWithLogging {
     log.info(s"Result: ${result}")
     val writer = new PrintWriter(new FileOutputStream(new File(logFile),true))
     writer.write(result)
+    writer.flush()
+    writer.close()
 
 
   }
