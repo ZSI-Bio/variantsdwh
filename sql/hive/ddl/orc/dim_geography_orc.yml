@@ -5,6 +5,8 @@ queryType: CREATE
 
 queryEngine: Hive
 
+storageFormat: "{{DATA_FORMAT}}"
+
 queryDesc: Create {{DB_NAME}}.`dim_geography_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format 
 
 statement: CREATE TABLE IF NOT EXISTS {{DB_NAME}}.`dim_geography_{{DATA_FORMAT}}`(
