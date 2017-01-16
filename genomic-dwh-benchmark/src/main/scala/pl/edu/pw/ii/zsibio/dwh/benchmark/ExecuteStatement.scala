@@ -59,6 +59,7 @@ object ExecuteStatement {
             val queryWithReplacedVars = query.copy(
               queryId = replaceVars(query.queryId),
               queryDesc = replaceVars(query.queryDesc),
+              storageFormat = replaceVars(query.storageFormat),
               statement = replaceVars(query.statement)
                            )
             QueryExecutorWithLogging.runStatement(queryWithReplacedVars,conn,Conf.logFile())

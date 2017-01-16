@@ -14,7 +14,7 @@ import pl.edu.pw.ii.zsibio.dwh.benchmark.utils.QueryType.QueryType
   * Created by marek on 15.01.17.
   */
 
-case class Query(queryId:String, queryType:String, queryEngine:String, queryDesc:String, statement:String)
+case class Query(queryId:String, queryType:String, queryEngine:String, storageFormat:String,queryDesc:String, statement:String)
 
 object QueryType extends Enumeration {
 
@@ -26,7 +26,7 @@ object QueryType extends Enumeration {
 object QueryExecutorWithLogging {
   val log = Logger.getLogger("pl.edu.pw.ii.zsibio.dwh.benchmark.utils.QueryExecutorWithLogging")
   object QueryYamlProtocol extends DefaultYamlProtocol {
-    implicit val queryFormat = yamlFormat5(Query)
+    implicit val queryFormat = yamlFormat6(Query)
   }
 
 
@@ -51,7 +51,7 @@ object QueryExecutorWithLogging {
   private def logQuery(conn:JDBCConnection,query: Query, logFile:String) ={
     val rs = conn.executeQuery(query.statement,true)
     rs.rs.next()
-    val result = s"${Calendar.getInstance().getTime().toString},${query.queryId},${query.queryEngine},${rs.timing.get.getTiming()}"
+    val result = s"${Calendar.getInstance().getTime().toString},${query.queryId},${query.queryEngine},${query.storageFormat},${rs.timing.get.getTiming()}\n"
     log.info(s"Result: ${result}")
     val writer = new PrintWriter(new FileOutputStream(new File(logFile),true))
     writer.write(result)
