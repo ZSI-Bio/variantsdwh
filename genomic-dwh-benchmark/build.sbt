@@ -18,7 +18,7 @@ outputStrategy := Some(StdoutOutput)
 
 libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-core" % "1.6.3" % "provided",
-  "org.apache.spark" % "spark-sql_2.10" % "1.6.3" % "provided",
+  "org.apache.spark" % "spark-sql_2.10" % "1.6.3" ,
   "com.databricks" % "spark-csv_2.10" % "1.5.0",
   "org.apache.spark" % "spark-hive_2.10" % "1.6.3" % "provided",
   "org.apache.hadoop" % "hadoop-client" % "2.6.0" % "provided",
@@ -30,7 +30,9 @@ libraryDependencies ++= Seq(
   "org.apache.hadoop" % "hadoop-common" % "2.6.0",
   "com.facebook.presto" % "presto-jdbc" % "0.163",
   "org.apache.logging.log4j" % "log4j-api" % "2.7",
-  "net.jcazevedo" %% "moultingyaml" % "0.4.0"
+  "net.jcazevedo" %% "moultingyaml" % "0.4.0",
+  "org.apache.kudu" % "kudu-client" % "1.0.1",
+  "org.parboiled" %% "parboiled" % "2.1.3"
 )
 
 resolvers += "Apache Repos" at "https://repository.apache.org/content/repositories/releases/"

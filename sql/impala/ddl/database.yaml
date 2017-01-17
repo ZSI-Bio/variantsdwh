@@ -1,0 +1,12 @@
+---
+queryId: DDL_IMPALA_{{DATA_FORMAT}}_0
+
+queryType: CREATE
+
+queryEngine: Impala
+
+storageFormat: "{{DATA_FORMAT}}"
+
+queryDesc: Create {{DB_NAME}} database
+
+statement: CREATE DATABASE IF NOT EXISTS {{DB_NAME}}

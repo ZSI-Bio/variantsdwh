@@ -3,9 +3,10 @@ package pl.edu.pw.ii.zsibio.dwh.benchmark
 import org.rogach.scallop.ScallopConf
 import pl.edu.pw.ii.zsibio.dwh.benchmark.dao.JDBCDriver.JDBCDriver
 import pl.edu.pw.ii.zsibio.dwh.benchmark.dao.{JDBCConnection, JDBCDriver}
-import pl.edu.pw.ii.zsibio.dwh.benchmark.utils.QueryExecutorWithLogging
+import pl.edu.pw.ii.zsibio.dwh.benchmark.utils.{DdlParser, KuduUtils, QueryExecutorWithLogging}
 
 import scala.collection.mutable.ArrayBuffer
+import scala.util.matching.Regex
 
 /**
   * Created by marek on 14.01.17.
@@ -31,6 +32,8 @@ object ExecuteStatement {
       val password =opt[String]("password",required = false, descr = "Password" )
       val queryFile =opt[String]("queryFile",required = true, descr = "A file containing a select statement in YAML format" )
       val logFile =opt[String]("logFile",required = true, descr = "A file for storing timing results" )
+      val partNum =opt[Int]("partNum",required = true, descr = "Number of partitions",default = Some(100) )
+
       verify()
     }
     val jdbcConfArray = new ArrayBuffer[(JDBCDriver, String)]()
@@ -54,15 +57,27 @@ object ExecuteStatement {
               property
                 .replaceAll("\\{\\{DATA_FORMAT\\}\\}",Conf.storageType().toUpperCase)
                 .replaceAll("\\{\\{DB_NAME\\}\\}",Conf.connString().split('/').last.toUpperCase)
+                .replaceAll("\\{\\{KUDU_MASTER\\}\\}",Conf.kuduMaster() )
+
             }
             val query = QueryExecutorWithLogging.parseQuertYAML(file)
             val queryWithReplacedVars = query.copy(
               queryId = replaceVars(query.queryId),
               queryDesc = replaceVars(query.queryDesc),
               storageFormat = replaceVars(query.storageFormat),
-              statement = replaceVars(query.statement)
+              statement = replaceVars(query.statement.replaceAll(",",",\n").replaceAll("\\(","\\(  "))
                            )
-            QueryExecutorWithLogging.runStatement(queryWithReplacedVars,conn,Conf.logFile())
+            if(queryWithReplacedVars.queryType.toLowerCase() =="create" && queryWithReplacedVars.storageFormat.toLowerCase()=="kudu"){
+              println(queryWithReplacedVars.statement)
+              val result = DdlParser.parse(queryWithReplacedVars.statement)
+              println(result.get.columns)
+              println(DdlParser.test)
+              //println(DDLParserRunner.parse(queryWithReplacedVars.statement.replace("CREATE EXTERNAL","")) )
+              //val kuduUtils = new KuduUtils(Conf.kuduMaster())
+              //kuduUtils.createTable(queryWithReplacedVars.statement,"{{TABLE_NAME}}_kudu",false,Conf.partNum(),2)
+            }
+
+            //QueryExecutorWithLogging.runStatement(queryWithReplacedVars,conn,Conf.logFile())
           }
           case _ => None
         }
