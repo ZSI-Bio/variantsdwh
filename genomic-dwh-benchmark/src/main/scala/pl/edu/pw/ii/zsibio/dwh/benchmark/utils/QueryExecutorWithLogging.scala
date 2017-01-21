@@ -35,21 +35,22 @@ object QueryExecutorWithLogging {
     log.debug(s"Executing query: ${query.statement}")
     query.queryType.toLowerCase() match {
       case "select" => logQuery(conn, query, logFile)
-      case _ => conn.executeUpdate(query.statement)
+      case _ => conn.executeUpdate(query.statement.toLowerCase)
     }
 
 
   }
 
-  def parseQuertYAML(file:String) : Query ={
+  def parseQueryYAML(file:String,storageType:String,connString:String, kuduMaster:String) : Query ={
     val lines = scala.io.Source.fromFile(file).mkString
     val yml = lines.stripMargin.parseYaml
     import QueryYamlProtocol._
-    yml.convertTo[Query]
+    queryPreprocess(yml.convertTo[Query],storageType,connString, kuduMaster)
+
   }
 
   private def logQuery(conn:JDBCConnection,query: Query, logFile:String) ={
-    val rs = conn.executeQuery(query.statement,true)
+    val rs = conn.executeQuery(query.statement.toLowerCase,true)
     rs.rs.next()
     val result = s"${Calendar.getInstance().getTime().toString},${query.queryId},${query.queryEngine},${query.storageFormat},${rs.timing.get.getTiming()}\n"
     log.info(s"Result: ${result}")
@@ -57,8 +58,22 @@ object QueryExecutorWithLogging {
     writer.write(result)
     writer.flush()
     writer.close()
+  }
 
+  private def queryPreprocess (query:Query,storageType:String,connString:String, kuduMaster:String) = {
+    def replaceVars(property:String) ={
+      property
+        .replaceAll("\\{\\{DATA_FORMAT\\}\\}",storageType.toUpperCase)
+        .replaceAll("\\{\\{DB_NAME\\}\\}",connString.split("/").last.toUpperCase)
+        .replaceAll("\\{\\{KUDU_MASTER\\}\\}",kuduMaster )
 
+    }
+    query.copy(
+      queryId = replaceVars(query.queryId),
+      queryDesc = replaceVars(query.queryDesc),
+      storageFormat = replaceVars(query.storageFormat),
+      statement = replaceVars(query.statement.replaceAll(",",",\n").replaceAll("\\(","\\(  "))
+    )
   }
 
 }

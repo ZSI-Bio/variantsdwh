@@ -31,8 +31,9 @@ libraryDependencies ++= Seq(
   "com.facebook.presto" % "presto-jdbc" % "0.163",
   "org.apache.logging.log4j" % "log4j-api" % "2.7",
   "net.jcazevedo" %% "moultingyaml" % "0.4.0",
-  "org.apache.kudu" % "kudu-client" % "1.0.1",
-  "org.parboiled" %% "parboiled" % "2.1.3"
+  "org.apache.kudu" % "kudu-client" % "1.1.0",
+  "org.parboiled" %% "parboiled" % "2.1.3",
+  "com.typesafe" % "config" % "1.3.1"
 )
 
 resolvers += "Apache Repos" at "https://repository.apache.org/content/repositories/releases/"

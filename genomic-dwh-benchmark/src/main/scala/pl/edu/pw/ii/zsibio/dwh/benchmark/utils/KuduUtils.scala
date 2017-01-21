@@ -20,21 +20,24 @@ import scala.collection.JavaConverters._
   */
 
 case class IllegalInputParameterException(msg:String)  extends Throwable(msg)
+case class TableDef(tableName:String, struct: StructType)
+
 class KuduUtils(kuduMaster:String) {
 
   val kuduClient = new KuduClientBuilder(kuduMaster).build()
   val log = Logger.getLogger("pl.edu.pw.ii.zsibio.dwh.benchmark.utils.KuduUtils")
 
-  def createTable(ddl:String, tableName: String, dropIfExists:Boolean = false, partitions:Int = 100, replicas:Int = 2) = {
-
+  def createTable(ddl:String, storageType:String, dropIfExists:Boolean = false, partitions:Int = 100, replicas:Int = 2) = {
+    log.debug(ddl)
     val columns = new util.ArrayList[ColumnSchema]()
-    val schemaSQL = ddl2SparkSQLSchema(ddl)
-    schemaSQL.fields
+    val tableDef = ddl2SparkSQLSchema(ddl)
+    tableDef.struct.fields
       .foreach {
         f => {
           val col = new ColumnSchemaBuilder(f.name,
             f.dataType match {
               case StringType => Type.STRING
+              case FloatType => Type.FLOAT
               case IntegerType => Type.INT32
               case LongType => Type.INT64
               case DoubleType => Type.DOUBLE
@@ -55,7 +58,7 @@ class KuduUtils(kuduMaster:String) {
         }
 
       }
-    val pkColumns = schemaSQL
+    val pkColumns = tableDef.struct
       .fields
       .filter(f=>f.nullable == false)
       .map(_.name)
@@ -65,6 +68,7 @@ class KuduUtils(kuduMaster:String) {
     tabOpts.addHashPartitions(pkColumns,partitions)
     tabOpts.setNumReplicas(replicas)
     val schema = new Schema(columns)
+    val tableName = tableDef.tableName
     if ( ! kuduClient.tableExists(tableName) ) {
       kuduClient.createTable(tableName, schema,tabOpts);
     }
@@ -85,10 +89,52 @@ class KuduUtils(kuduMaster:String) {
     kuduClient.close()
   }
 
-  private def ddl2SparkSQLSchema(ddl:String): StructType = {
-    val schema = new StructType()
-    ddl.split('\n').foreach(l=>log.debug(l))
-    schema
+  /*private*/ def ddl2SparkSQLSchema(ddl:String): TableDef = {
+
+
+
+    val keyColumns = ddl
+      .split("kudu.key_columns")(1)
+      .split("=")(1)
+      .replace("'","")
+      .replace(")","")
+      .trim.split(",")
+    val result = DdlParser.parse(ddl)
+    val tableName = {
+     val tableMaybeWithDB = result
+        .get
+        .name
+        .toLowerCase
+        .split('.')
+      if(tableMaybeWithDB.length == 2)
+        tableMaybeWithDB(1)
+      else
+        tableMaybeWithDB(0)
+    }
+
+    val columns = result
+      .get
+      .columns
+      .map{
+        c =>
+          val splitColumn = c.replace("`","").split(' ').map(v=>v.trim.toLowerCase)
+          StructField(splitColumn(0),
+            splitColumn(1).toLowerCase match {
+              case "string" => StringType
+              case "double" => DoubleType
+              case "float" => FloatType
+              case "int" => IntegerType
+              case "bigint" => LongType
+              case "boolean" => BooleanType
+              case _ => throw new Exception(s"Unsupported data type ${splitColumn(1).toUpperCase()}")
+            }, if(keyColumns.contains(splitColumn(0) ) ) false else true
+          )
+      }
+    log.debug(keyColumns(0))
+    log.debug(columns.mkString("|"))
+    log.debug(tableName)
+    val schema = new StructType(columns.toArray)
+    new TableDef(tableName, schema)
   }
 
 

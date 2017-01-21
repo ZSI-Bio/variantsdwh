@@ -10,7 +10,7 @@ storageFormat: "{{DATA_FORMAT}}"
 
 queryDesc: Create {{DB_NAME}}.`dim_variant_predictions_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format
 
-statement: CREATE EXTERNAL TABLE {{DB_NAME}}.dim_variant_predictions_{{DATA_FORMAT}} ( 
+statement: CREATE EXTERNAL TABLE IF NOT EXISTS {{DB_NAME}}.dim_variant_predictions_{{DATA_FORMAT}} ( 
  `v_id` BIGINT,
  `v_chr` STRING,
  `v_pos` INT,
