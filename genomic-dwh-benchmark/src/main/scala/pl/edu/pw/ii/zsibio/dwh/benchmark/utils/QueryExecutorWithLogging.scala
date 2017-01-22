@@ -42,6 +42,7 @@ object QueryExecutorWithLogging {
   }
 
   def parseQueryYAML(file:String,storageType:String,connString:String, kuduMaster:String) : Query ={
+    log.info(s"Parsing ${file}")
     val lines = scala.io.Source.fromFile(file).mkString
     val yml = lines.stripMargin.parseYaml
     import QueryYamlProtocol._
