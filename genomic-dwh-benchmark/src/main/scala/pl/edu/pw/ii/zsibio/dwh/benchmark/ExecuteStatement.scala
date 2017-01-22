@@ -32,7 +32,7 @@ object ExecuteStatement {
     //val username =opt[String]("username",required = false, descr = "Username" )
     //val password =opt[String]("password",required = false, descr = "Password" )
     val queryDir =opt[String]("queryDir",required = true, descr = "A file containing a select statement in YAML format" )
-    val logFile =opt[String]("logFile",required = true, descr = "A file for storing timing results" )
+    val logFile =opt[String]("logFile",required = false, descr = "A file for storing timing results", default = Some("results.csv") )
     val partNum =opt[Int]("partNum",required = true, descr = "Number of partitions",default = Some(100) )
 
     verify()
@@ -69,14 +69,13 @@ object ExecuteStatement {
         run(runConf, confFile, jobConf, kuduMaster)
       }
      )
-
-
     }
 
   def run(runConf:RunConf,confFile:Config,jobConf:(JDBCDriver,String), kuduMaster:String)={
     val conn = new JDBCConnection()
     conn.open(jobConf._1,jobConf._2)
     val allFiles = getRecursListFiles(new File(runConf.queryDir()))
+      .sortBy(f =>f.getName)
     allFiles.map {queryFile =>
       val query = QueryExecutorWithLogging
             .parseQueryYAML(queryFile.getAbsolutePath, runConf.storageType(), jobConf._2, kuduMaster)
