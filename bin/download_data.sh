@@ -37,9 +37,9 @@ cd $DATA_DIR
 ls -1 *.gz | xargs -i $HADOOP_CMD -put -f {} $HDFS_TMP_DIR
 cd ..
 
-$HADOOP_CMD -ls  $HDFS_TMP_DIR | sed 's/\ \+/,/g' | cut -f8 -d',' | grep "^\/" | grep "gz$" |rev | cut -f1 -d'/' | rev | cut -f1 -d'.' | xargs -i spark-submit --master $SPARK_MASTER  --class pl.edu.pw.ii.zsibio.dwh.benchmark.DataLoader genomic-dwh-benchmark/target/scala-2.10/genomic-dwh-benchmark-assembly-1.0.jar --csvFile hdfs://${HDFS_TMP_DIR}/{}.gz --tableName {}_orc --dbName $DB_NAME --storageType orc
+#$HADOOP_CMD -ls  $HDFS_TMP_DIR | sed 's/\ \+/,/g' | cut -f8 -d',' | grep "^\/" | grep "gz$" |rev | cut -f1 -d'/' | rev | cut -f1 -d'.' | xargs -i spark-submit --master $SPARK_MASTER  --class pl.edu.pw.ii.zsibio.dwh.benchmark.DataLoader genomic-dwh-benchmark/target/scala-2.10/genomic-dwh-benchmark-assembly-1.0.jar --csvFile hdfs://${HDFS_TMP_DIR}/{}.gz --tableName {}_orc --dbName $DB_NAME --storageType orc
 
-$HADOOP_CMD -ls  $HDFS_TMP_DIR | sed 's/\ \+/,/g' | cut -f8 -d',' | grep "^\/" | grep "gz$" |rev | cut -f1 -d'/' | rev | cut -f1 -d'.' | xargs -i spark-submit --master $SPARK_MASTER  --class pl.edu.pw.ii.zsibio.dwh.benchmark.DataLoader genomic-dwh-benchmark/target/scala-2.10/genomic-dwh-benchmark-assembly-1.0.jar --csvFile hdfs://${HDFS_TMP_DIR}/{}.gz --tableName {}_parquet --dbName $DB_NAME --storageType parquet
+#$HADOOP_CMD -ls  $HDFS_TMP_DIR | sed 's/\ \+/,/g' | cut -f8 -d',' | grep "^\/" | grep "gz$" |rev | cut -f1 -d'/' | rev | cut -f1 -d'.' | xargs -i spark-submit --master $SPARK_MASTER  --class pl.edu.pw.ii.zsibio.dwh.benchmark.DataLoader genomic-dwh-benchmark/target/scala-2.10/genomic-dwh-benchmark-assembly-1.0.jar --csvFile hdfs://${HDFS_TMP_DIR}/{}.gz --tableName {}_parquet --dbName $DB_NAME --storageType parquet
 
 
 $HADOOP_CMD -ls  $HDFS_TMP_DIR | sed 's/\ \+/,/g' | cut -f8 -d',' | grep "^\/" | grep "gz$" |rev | cut -f1 -d'/' | rev | cut -f1 -d'.' | xargs -i spark-submit --master $SPARK_MASTER  --class pl.edu.pw.ii.zsibio.dwh.benchmark.DataLoader genomic-dwh-benchmark/target/scala-2.10/genomic-dwh-benchmark-assembly-1.0.jar --csvFile hdfs://${HDFS_TMP_DIR}/{}.gz --tableName {}_kudu --dbName $DB_NAME --storageType kudu
