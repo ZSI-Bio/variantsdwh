@@ -41,12 +41,12 @@ object QueryExecutorWithLogging {
 
   }
 
-  def parseQueryYAML(file:String,storageType:String,connString:String, kuduMaster:String) : Query ={
+  def parseQueryYAML(file:String,storageType:String,connString:String, kuduMaster:String, dbName:String)  : Query ={
     log.info(s"Parsing ${file}")
     val lines = scala.io.Source.fromFile(file).mkString
     val yml = lines.stripMargin.parseYaml
     import QueryYamlProtocol._
-    queryPreprocess(yml.convertTo[Query],storageType,connString, kuduMaster)
+    queryPreprocess(yml.convertTo[Query],storageType,connString, kuduMaster, dbName)
 
   }
 
@@ -61,11 +61,11 @@ object QueryExecutorWithLogging {
     writer.close()
   }
 
-  private def queryPreprocess (query:Query,storageType:String,connString:String, kuduMaster:String) = {
+  private def queryPreprocess (query:Query,storageType:String,connString:String, kuduMaster:String, dbName:String) = {
     def replaceVars(property:String) ={
       property
         .replaceAll("\\{\\{DATA_FORMAT\\}\\}",storageType.toUpperCase)
-        .replaceAll("\\{\\{DB_NAME\\}\\}",connString.split("/").last.toUpperCase)
+        .replaceAll("\\{\\{DB_NAME\\}\\}",dbName)
         .replaceAll("\\{\\{KUDU_MASTER\\}\\}",kuduMaster )
 
     }

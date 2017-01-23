@@ -1,0 +1,33 @@
+---
+
+queryId: DDL_IMPALA_{{DATA_FORMAT}}_9
+
+queryType: CREATE
+
+queryEngine: Impala
+
+storageFormat: "{{DATA_FORMAT}}"
+
+queryDesc: Create {{DB_NAME}}.`fact_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format
+
+statement: CREATE EXTERNAL TABLE IF NOT EXISTS {{DB_NAME}}.fact_{{DATA_FORMAT}} ( 
+   `f_sample_id` bigint,
+ `f_geo_id` bigint,
+ `f_d_id` bigint,
+ `f_ensembl_gp_id` bigint,
+ `f_refseq_gp_id` bigint,
+ `f_v_id` bigint,
+ `f_variant_name` string,
+ `f_chr` string,
+ `f_pos` bigint,
+ `f_ref` string,
+ `f_alt` string,
+ `f_alter_depth` int,
+ `f_total_depth` int,
+ `f_genotype` string)
+ TBLPROPERTIES(
+  'storage_handler' = 'com.cloudera.kudu.hive.KuduStorageHandler',
+  'kudu.table_name' = 'fact_{{DATA_FORMAT}}',
+  'kudu.master_addresses' = '{{KUDU_MASTER}}',
+  'kudu.key_columns' = 'f_sample_id,f_geo_id,f_ensembl_gp_id,f_refseq_gp_id,f_v_id'
+ )
