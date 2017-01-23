@@ -17,21 +17,21 @@ javaOptions in run ++= Seq(
 outputStrategy := Some(StdoutOutput)
 
 libraryDependencies ++= Seq(
-  "org.apache.spark" %% "spark-core" % "1.6.3" % "provided",
-  "org.apache.spark" % "spark-sql_2.10" % "1.6.3" ,
-  "com.databricks" % "spark-csv_2.10" % "1.5.0",
-  "org.apache.spark" % "spark-hive_2.10" % "1.6.3" % "provided",
-  "org.apache.hadoop" % "hadoop-client" % "2.6.0" % "provided",
+  "org.apache.spark" %% "spark-core" % "1.6.3" % "provided" excludeAll ExclusionRule(organization = "javax.servlet"),
+  "org.apache.spark" % "spark-sql_2.10" % "1.6.3" excludeAll ExclusionRule(organization = "javax.servlet") ,
+  "com.databricks" % "spark-csv_2.10" % "1.5.0" excludeAll ExclusionRule(organization = "javax.servlet"),
+  "org.apache.spark" % "spark-hive_2.10" % "1.6.3"  excludeAll ExclusionRule(organization = "javax.servlet"),
+  "org.apache.hadoop" % "hadoop-client" % "2.6.0" % "provided" excludeAll ExclusionRule(organization = "javax.servlet"),
   "org.scalatest" % "scalatest_2.10" % "2.1.0-RC2" % "test",
   "org.apache.commons" % "commons-lang3" % "3.4",
   "org.apache.commons" % "commons-math3" % "3.5",
   "org.rogach" %% "scallop" % "2.0.6",
-  "org.apache.hive" % "hive-jdbc" % "1.1.0-cdh5.8.0",
-  "org.apache.hadoop" % "hadoop-common" % "2.6.0",
-  "com.facebook.presto" % "presto-jdbc" % "0.163",
+  "org.apache.hive" % "hive-jdbc" % "1.1.0-cdh5.8.0" excludeAll ExclusionRule(organization = "javax.servlet"),
+  "org.apache.hadoop" % "hadoop-common" % "2.6.0" excludeAll ExclusionRule(organization = "javax.servlet"),
+  "com.facebook.presto" % "presto-jdbc" % "0.163" excludeAll ExclusionRule(organization = "javax.servlet"),
   "org.apache.logging.log4j" % "log4j-api" % "2.7",
   "net.jcazevedo" %% "moultingyaml" % "0.4.0",
-  "org.apache.kudu" % "kudu-client" % "1.1.0",
+  "org.apache.kudu" % "kudu-client" % "1.1.0" excludeAll ExclusionRule(organization = "javax.servlet"),
   "org.parboiled" %% "parboiled" % "2.1.3",
   "com.typesafe" % "config" % "1.3.1"
 )

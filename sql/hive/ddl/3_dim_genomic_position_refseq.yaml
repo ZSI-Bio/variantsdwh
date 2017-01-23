@@ -1,0 +1,24 @@
+queryId: DDL_HIVE_{{DATA_FORMAT}}_3
+
+queryType: CREATE
+
+queryEngine: Hive
+
+storageFormat: "{{DATA_FORMAT}}"
+
+queryDesc: Create {{DB_NAME}}.`dim_genomic_position_refseq_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format
+
+statement: CREATE TABLE IF NOT EXISTS {{DB_NAME}}.`dim_genomic_position_refseq_{{DATA_FORMAT}}`(
+   `gp_id` bigint,
+   `gp_chr` string,
+   `gp_start` int,
+   `gp_stop` int,
+   `gp_exon_num` int,
+   `gp_exon_count` int,
+   `gp_trans_id` string,
+   `iscanonical` boolean,
+   `ismerged` boolean,
+   `gp_gene_id` string,
+   `gp_hgnc_approved_gene_name` string,
+   `gp_cyto` string)
+   STORED AS {{DATA_FORMAT}}

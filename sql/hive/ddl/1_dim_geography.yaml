@@ -1,0 +1,20 @@
+queryId: DDL_HIVE_{{DATA_FORMAT}}_1
+
+queryType: CREATE
+
+queryEngine: Hive
+
+storageFormat: "{{DATA_FORMAT}}"
+
+queryDesc: Create {{DB_NAME}}.`dim_geography_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format
+
+statement: CREATE TABLE IF NOT EXISTS {{DB_NAME}}.`dim_geography_{{DATA_FORMAT}}`(
+   `geo_id` int,
+   `geo_code` string,
+   `geo_country_name_en` string,
+   `geo_region_id` int,
+   `geo_region_name_en` string,
+   `geo_sub_region_id` int,
+   `geo_sub_region_name_en` string)
+    STORED AS {{DATA_FORMAT}}
+
