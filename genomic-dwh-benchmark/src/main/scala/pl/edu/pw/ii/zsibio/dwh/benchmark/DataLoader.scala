@@ -2,10 +2,13 @@ package pl.edu.pw.ii.zsibio.dwh.benchmark
 
 import com.typesafe.config.ConfigFactory
 import org.apache.kudu.spark.kudu.KuduContext
-import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.{Row, SQLContext}
 import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.{SparkConf, SparkContext}
 import org.rogach.scallop.ScallopConf
+import org.apache.kudu.spark.kudu._
+import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.types.{DataType, StructField, StructType}
 
 /**
   * Created by marek on 23.01.17.
@@ -27,14 +30,17 @@ object DataLoader {
         .setAppName("DataLoader")
     val sc = new SparkContext(scConf)
     val sqlContext = new HiveContext(sc)
-    val df = sqlContext.read
-      .format("com.databricks.spark.csv")
-      .option("delimiter", "|")
-      .option("inferSchema", "true") // Automatically infer data types
-      .load(runConf.csvFile())
-      .repartition(10)
-    df.registerTempTable("temp_csv")
+
+
     if(runConf.storageType().toLowerCase() == "orc" || runConf.storageType().toLowerCase() == "parquet") {
+      val df = sqlContext.read
+        .format("com.databricks.spark.csv")
+        .option("delimiter", "|")
+        .option("nullValue","\\N")
+        .option("inferSchema", "true") // Automatically infer data types
+        .load(runConf.csvFile())
+        .repartition(10)
+      df.registerTempTable("temp_csv")
       sqlContext.sql(
         s"""
         |INSERT OVERWRITE TABLE ${runConf.dbName()}.${runConf.tableName()}
@@ -46,8 +52,26 @@ object DataLoader {
       val confFile = ConfigFactory.load()
       val kuduMaster = confFile.getString("kudu.master.server")
       val kuduContext = new KuduContext(kuduMaster)
-      kuduContext.insertRows(df,runConf.tableName())
+      val dfTarget = sqlContext.read.options(Map("kudu.master" -> kuduMaster,"kudu.table" -> runConf.tableName())).kudu
+      val df = sqlContext.read
+        .format("com.databricks.spark.csv")
+        .option("delimiter", "|")
+        .option("nullValue","\\N")
+        .schema(dfTarget.schema)
+        .load(runConf.csvFile())
+        .repartition(10)
+      kuduContext.upsertRows(df,runConf.tableName())
     }
+
+  }
+
+  private def synSchemas(inSchema:StructType, outSchema:StructType) = {
+
+    val size = inSchema.fields.length
+    val structFields = (0 to size - 1).map{
+      i => StructField(outSchema.fields(i).name,inSchema.fields(i).dataType,outSchema.fields(i).nullable)
+    }
+    new StructType(structFields.toArray)
 
   }
 
