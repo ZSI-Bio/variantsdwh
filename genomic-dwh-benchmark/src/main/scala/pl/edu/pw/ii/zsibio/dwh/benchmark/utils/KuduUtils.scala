@@ -95,10 +95,10 @@ class KuduUtils(kuduMaster:String) {
 
     val keyColumns = ddl
       .split("kudu.key_columns")(1)
-      .split("=")(1)
+      .split('=')(1)
       .replace("'","")
       .replace(")","")
-      .trim.split(",")
+      .trim.split(',')
     val result = DdlParser.parse(ddl)
     val tableName = {
      val tableMaybeWithDB = result
@@ -130,9 +130,9 @@ class KuduUtils(kuduMaster:String) {
             }, if(keyColumns.contains(splitColumn(0) ) ) false else true
           )
       }
-    log.debug(keyColumns(0))
-    log.debug(columns.mkString("|"))
-    log.debug(tableName)
+    log.debug(s"Key columns: ${keyColumns.mkString("|")}" )
+    log.debug(s"Schema: ${columns.mkString("|")}")
+    log.debug(s"Table name: ${tableName}")
     val schema = new StructType(columns.toArray)
     new TableDef(tableName, schema)
   }

@@ -64,8 +64,8 @@ object QueryExecutorWithLogging {
   private def queryPreprocess (query:Query,storageType:String,connString:String, kuduMaster:String, dbName:String) = {
     def replaceVars(property:String) ={
       property
-        .replaceAll("\\{\\{DATA_FORMAT\\}\\}",storageType.toUpperCase)
-        .replaceAll("\\{\\{DB_NAME\\}\\}",dbName)
+        .replaceAll("\\{\\{DATA_FORMAT\\}\\}",storageType.toLowerCase)
+        .replaceAll("\\{\\{DB_NAME\\}\\}",dbName.toLowerCase)
         .replaceAll("\\{\\{KUDU_MASTER\\}\\}",kuduMaster )
 
     }

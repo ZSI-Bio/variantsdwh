@@ -32,11 +32,11 @@ object DdlParser {
   val NewLine = "\n"
   val Comma = ","
   val Space = " "
-  val CreateTable = "table"
+  val CreateTable = "table if not exists"
 
   private val sample =
     """
-CREATE EXTERNAL TABLE `dws.test2`(
+CREATE EXTERNAL TABLE IF NOT EXISTS `dws.test2`(
   a INT,
   b VARCHAR,
   c FLOAT
