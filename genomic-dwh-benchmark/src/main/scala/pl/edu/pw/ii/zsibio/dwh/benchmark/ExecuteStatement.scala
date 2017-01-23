@@ -75,7 +75,8 @@ object ExecuteStatement {
     val conn = new JDBCConnection()
     conn.open(jobConf._1,jobConf._2)
     val allFiles = getRecursListFiles(new File(runConf.queryDir()))
-      .sortBy(f =>f.getName)
+        .filter(f => f.getName.endsWith("yaml"))
+        .sortBy(f => f.getName)
     allFiles.map {queryFile =>
       val query = QueryExecutorWithLogging
             .parseQueryYAML(queryFile.getAbsolutePath, runConf.storageType(), jobConf._2, kuduMaster)
