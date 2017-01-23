@@ -1,15 +1,17 @@
-queryId: DDL_HIVE_{{DATA_FORMAT}}_5
+---
+
+queryId: DDL_IMPALA_{{DATA_FORMAT}}_5
 
 queryType: CREATE
 
-queryEngine: Hive
+queryEngine: Impala
 
 storageFormat: "{{DATA_FORMAT}}"
 
 queryDesc: Create {{DB_NAME}}.`dim_variant_predictions_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format
 
-statement: CREATE TABLE IF NOT EXISTS {{DB_NAME}}.`dim_variant_predictions_{{DATA_FORMAT}}`(
-   `v_id` bigint,
+statement: CREATE EXTERNAL TABLE IF NOT EXISTS {{DB_NAME}}.dim_variant_predictions_{{DATA_FORMAT}} ( 
+    `v_id` bigint,
    `v_chr` string,
    `v_pos` int,
    `v_alt` string,
@@ -38,4 +40,9 @@ statement: CREATE TABLE IF NOT EXISTS {{DB_NAME}}.`dim_variant_predictions_{{DAT
    `v_mutation_taster_rankscore` float,
    `v_mutation_taster_pred` string,
    `v_variant_name` string)
-  STORED AS {{DATA_FORMAT}}
+ TBLPROPERTIES(
+  'storage_handler' = 'com.cloudera.kudu.hive.KuduStorageHandler',
+  'kudu.table_name' = 'dim_variant_predictions_{{DATA_FORMAT}}',
+  'kudu.master_addresses' = '{{KUDU_MASTER}}',
+  'kudu.key_columns' = 'v_id'
+ )

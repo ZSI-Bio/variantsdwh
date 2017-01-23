@@ -21,7 +21,7 @@ object ExecuteStatement {
 
     banner("Usage: ...")
 
-    //val dbName = opt[String](required = false, descr = "Database name in HiveMetastore" )
+    val dbName = opt[String]("dbName",required = true, descr = "Database name in HiveMetastore" )
     val useHive = opt[Boolean]("useHive",required = false, descr = "Create tables in Hive stored")
     val storageType = opt[String]("storageType",required = true, descr = "Storage type parquet|orc|kudu|carbon")
     val useImpala = opt[Boolean]("useImpala",required = false, descr = "Create tables in Kudu" )
@@ -79,7 +79,7 @@ object ExecuteStatement {
         .sortBy(f => f.getName)
     allFiles.map {queryFile =>
       val query = QueryExecutorWithLogging
-            .parseQueryYAML(queryFile.getAbsolutePath, runConf.storageType(), jobConf._2, kuduMaster)
+            .parseQueryYAML(queryFile.getAbsolutePath, runConf.storageType(), jobConf._2, kuduMaster,runConf.dbName())
       if (query.queryType.toLowerCase() == "create" && !query.statement.toLowerCase().contains("create database")
         && query.storageFormat.toLowerCase() == "kudu") {
         val kuduUtils = new KuduUtils(kuduMaster)

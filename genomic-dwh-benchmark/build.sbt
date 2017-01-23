@@ -32,6 +32,7 @@ libraryDependencies ++= Seq(
   "org.apache.logging.log4j" % "log4j-api" % "2.7",
   "net.jcazevedo" %% "moultingyaml" % "0.4.0",
   "org.apache.kudu" % "kudu-client" % "1.1.0" excludeAll ExclusionRule(organization = "javax.servlet"),
+  "org.apache.kudu" % "kudu-spark_2.10" % "1.1.0",
   "org.parboiled" %% "parboiled" % "2.1.3",
   "com.typesafe" % "config" % "1.3.1"
 )
@@ -49,6 +50,7 @@ assemblyMergeStrategy in assembly := {
   case PathList("com", "codahale", xs@_*) => MergeStrategy.first
   case PathList("edu", "umd", xs@_*) => MergeStrategy.first
   case PathList("org", "apache", xs@_*) => MergeStrategy.first
+  case PathList("org", "jboss", xs@_*) => MergeStrategy.first
   case PathList("fi", "tkk", "ics", xs@_*) => MergeStrategy.first
   case PathList("com", "esotericsoftware", xs@_*) => MergeStrategy.first
   case PathList("org", "objectweb", xs@_*) => MergeStrategy.last
@@ -74,6 +76,7 @@ assemblyMergeStrategy in assembly := {
   case ("plugin.properties") => MergeStrategy.first
   case ("plugin.xml") => MergeStrategy.first
   case ("parquet.thrift") => MergeStrategy.first
+  case ("hive-log4j.properties") => MergeStrategy.first
   case ("webapps/static/dt-1.9.4/css/demo_page.css") => MergeStrategy.first
   case ("webapps/static/dt-1.9.4/images/favicon.ico") => MergeStrategy.first
   case ("webapps/static/yarn.css") => MergeStrategy.first
