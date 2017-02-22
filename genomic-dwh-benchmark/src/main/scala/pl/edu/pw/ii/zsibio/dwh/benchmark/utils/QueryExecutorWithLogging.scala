@@ -3,12 +3,12 @@ package pl.edu.pw.ii.zsibio.dwh.benchmark.utils
 import java.io.{File, FileOutputStream, PrintWriter}
 import java.util.Calendar
 
-import pl.edu.pw.ii.zsibio.dwh.benchmark.dao.{JDBCConnection, QueryResult}
+import pl.edu.pw.ii.zsibio.dwh.benchmark.dao.{ConnectDriver, EngineConnection, QueryResult}
 import net.jcazevedo.moultingyaml._
 import net.jcazevedo.moultingyaml.DefaultYamlProtocol
 import net.jcazevedo.moultingyaml.DefaultYamlProtocol._
 import org.apache.log4j.Logger
-import pl.edu.pw.ii.zsibio.dwh.benchmark.dao.JDBCDriver.Value
+import pl.edu.pw.ii.zsibio.dwh.benchmark.dao.ConnectDriver.Value
 import pl.edu.pw.ii.zsibio.dwh.benchmark.utils.QueryType.QueryType
 /**
   * Created by marek on 15.01.17.
@@ -30,7 +30,7 @@ object QueryExecutorWithLogging {
   }
 
 
-  def runStatement(query: Query,conn:JDBCConnection,logFile:String) = {
+  def runStatement(query: Query, conn:EngineConnection, logFile:String) = {
     log.info(s"Running ${query.queryId} ... using ${query.queryEngine} engine")
     log.debug(s"Executing query: ${query.statement}")
     query.queryType.toLowerCase() match {
@@ -50,7 +50,7 @@ object QueryExecutorWithLogging {
 
   }
 
-  private def logQuery(conn:JDBCConnection,query: Query, logFile:String) ={
+  private def logQuery(conn:EngineConnection, query: Query, logFile:String) ={
     val rs = conn.executeQuery(query.statement.toLowerCase,true)
     rs.rs.next()
     val result = s"${Calendar.getInstance().getTime().toString},${query.queryId},${query.queryEngine},${query.storageFormat},${rs.timing.get.getTiming()}\n"

@@ -1,0 +1,32 @@
+queryId: DDL_HIVE_{{DATA_FORMAT}}_99
+
+queryType: CREATE
+
+queryEngine: Hive
+
+storageFormat: "{{DATA_FORMAT}}"
+
+queryDesc: Create {{DB_NAME}}.`fact_agg_genotypes_counts_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format
+
+statement: CREATE TABLE IF NOT EXISTS {{DB_NAME}}.fact_agg_genotypes_counts_{{DATA_FORMAT}} (
+  `f_ensembl_gp_id` bigint,
+  `f_refseq_gp_id` bigint,
+  `f_v_id` bigint,
+  `f_variant_name` string,
+  `f_pos` bigint,
+  `f_ref` string,
+  `f_alt` string,
+  `f_d_id` bigint,
+  `f_sum_total_depth` bigint,
+  `f_sum_alter_depth` bigint,
+  `f_cnt_alter` bigint,
+  `geo_country_name_en` string,
+  `geo_region_id` int,
+  `geo_region_name_en` string,
+  `f_country_total_samples` bigint,
+  `f_region_total_samples` bigint,
+  `f_total_samples` bigint,
+  `f_genotype` string,
+  `f_chr` string,
+  `f_geo_id` bigint)
+  STORED AS {{DATA_FORMAT}}
