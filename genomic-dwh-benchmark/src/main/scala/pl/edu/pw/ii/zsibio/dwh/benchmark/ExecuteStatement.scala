@@ -4,8 +4,8 @@ import java.io.File
 import java.nio.file.Path
 
 import org.rogach.scallop.ScallopConf
-import pl.edu.pw.ii.zsibio.dwh.benchmark.dao.JDBCDriver.JDBCDriver
-import pl.edu.pw.ii.zsibio.dwh.benchmark.dao.{JDBCConnection, JDBCDriver}
+import pl.edu.pw.ii.zsibio.dwh.benchmark.dao.ConnectDriver.Driver
+import pl.edu.pw.ii.zsibio.dwh.benchmark.dao.{EngineConnection, ConnectDriver}
 import pl.edu.pw.ii.zsibio.dwh.benchmark.utils.{DdlParser, KuduUtils, QueryExecutorWithLogging}
 import com.typesafe.config.{Config, ConfigFactory}
 
@@ -45,23 +45,24 @@ object ExecuteStatement {
     val prestoConnString = confFile.getString("jdbc.presto.connection")
     val hiveConnString = confFile.getString("jdbc.hive.connection")
     val impalaConnString = confFile.getString("jdbc.impala.connection")
+    val impalaThriftString = confFile.getString("impala.thrift.server")
     val kuduMaster = confFile.getString("kudu.master.server")
 
-    val jdbcConfArray = new ArrayBuffer[(JDBCDriver, String)]()
+    val jdbcConfArray = new ArrayBuffer[(Driver, String)]()
 
     if( runConf.useHive() && !hiveConnString.isEmpty)
-      jdbcConfArray.append((JDBCDriver.HIVE,hiveConnString ) )
+      jdbcConfArray.append((ConnectDriver.HIVE,hiveConnString ) )
     else if (runConf.useHive() && hiveConnString.isEmpty)
       throw new Exception("Hive to be used but Hive jdbc is missing in the conf file")
 
     if (runConf.usePresto() && !prestoConnString.isEmpty)
-      jdbcConfArray.append((JDBCDriver.PRESTO,prestoConnString ))
+      jdbcConfArray.append((ConnectDriver.PRESTO,prestoConnString ))
     else if (runConf.usePresto() && prestoConnString.isEmpty)
       throw new Exception("Hive to be used but Hive jdbc is missing in the conf file")
 
     if (runConf.useImpala() && !impalaConnString.isEmpty  &&
       ( (runConf.storageType().toLowerCase =="kudu" && !kuduMaster.isEmpty) || (runConf.storageType().toLowerCase() == "parquet") ) )
-      jdbcConfArray.append((JDBCDriver.IMPALA,impalaConnString ) )
+      jdbcConfArray.append((ConnectDriver.IMPALA_JDBC,impalaConnString ) )
     else if (runConf.useImpala() && (impalaConnString.isEmpty  || kuduMaster.isEmpty) )
       throw new Exception("Kudu to be used but Impala jdbc or kuduMaster is missing in the conf file")
 
@@ -71,8 +72,8 @@ object ExecuteStatement {
      )
     }
 
-  def run(runConf:RunConf,confFile:Config,jobConf:(JDBCDriver,String), kuduMaster:String)={
-    val conn = new JDBCConnection()
+  def run(runConf:RunConf, confFile:Config, jobConf:(Driver,String), kuduMaster:String)={
+    val conn = new EngineConnection(jobConf._1)
     conn.open(jobConf._1,jobConf._2)
     val allFiles = getRecursListFiles(new File(runConf.queryDir()))
         .filter(f => f.getName.endsWith("yaml"))
@@ -82,10 +83,16 @@ object ExecuteStatement {
             .parseQueryYAML(queryFile.getAbsolutePath, runConf.storageType(), jobConf._2, kuduMaster,runConf.dbName())
       if (query.queryType.toLowerCase() == "create" && !query.statement.toLowerCase().contains("create database")
         && query.storageFormat.toLowerCase() == "kudu") {
+
         val kuduUtils = new KuduUtils(kuduMaster)
         kuduUtils.createTable(query.statement, s"${runConf.storageType()}", true,
           confFile.getInt("kudu.table.partitions"), confFile.getInt("kudu.table.replication"))
+       /* val connImpalaThrift = new EngineConnection(ConnectDriver.IMPALA_THRIFT)
+        connImpalaThrift.open(jobConf._1,jobConf._2)
+        QueryExecutorWithLogging.runStatement(query,connImpalaThrift, runConf.logFile())
+        connImpalaThrift.close*/
       }
+
       QueryExecutorWithLogging.runStatement(query, conn, runConf.logFile())
 
     }
