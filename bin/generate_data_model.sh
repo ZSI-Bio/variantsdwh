@@ -12,17 +12,21 @@ case $i in
 esac
 done
 
-ASSEMBLY_JAR=genomic-dwh-benchmark/target/scala-2.10/genomic-dwh-benchmark-assembly-1.0.jar
+PWD=$(pwd | sed 's/bin//g' | sed 's/\/$//g')
+ASSEMBLY_JAR=`find ${PWD} -name genomic-dwh-benchmark-assembly*.jar`
+
 SQL_ROOT=sql/
 
+CONF_FILE=$PWD/conf/application.conf
+
 #create Impala and Kudu data model
-java -cp $ASSEMBLY_JAR  pl.edu.pw.ii.zsibio.dwh.benchmark.ExecuteStatement --useImpala --queryDir $SQL_ROOT/impala/ddl --storageType kudu --dbName ${DB_NAME}
+java -cp $ASSEMBLY_JAR -Dconfig.file=${CONF_FILE}  pl.edu.pw.ii.zsibio.dwh.benchmark.ExecuteStatement --useImpala --queryDir $SQL_ROOT/impala/ddl --storageType kudu --dbName ${DB_NAME}
 
 #create Hive data model using Parquet file format
-#java -cp $ASSEMBLY_JAR  pl.edu.pw.ii.zsibio.dwh.benchmark.ExecuteStatement --useHive --queryDir $SQL_ROOT/hive/ddl --storageType parquet --dbName ${DB_NAME}
+java -cp $ASSEMBLY_JAR  -Dconfig.file=${CONF_FILE} pl.edu.pw.ii.zsibio.dwh.benchmark.ExecuteStatement --useHive --queryDir $SQL_ROOT/hive/ddl --storageType parquet --dbName ${DB_NAME}
 
 #create Hive data model using ORC file format
-#java -cp $ASSEMBLY_JAR  pl.edu.pw.ii.zsibio.dwh.benchmark.ExecuteStatement --useHive --queryDir $SQL_ROOT/hive/ddl --storageType orc --dbName ${DB_NAME}
+java -cp $ASSEMBLY_JAR  -Dconfig.file=${CONF_FILE} pl.edu.pw.ii.zsibio.dwh.benchmark.ExecuteStatement --useHive --queryDir $SQL_ROOT/hive/ddl --storageType orc --dbName ${DB_NAME}
 
 #load data into Hive tables
 
