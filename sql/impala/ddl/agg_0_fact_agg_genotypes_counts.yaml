@@ -1,0 +1,40 @@
+---
+
+queryId: DDL_IMPALA_{{DATA_FORMAT}}_99
+
+queryType: CREATE
+
+queryEngine: Impala
+
+storageFormat: "{{DATA_FORMAT}}"
+
+queryDesc: Create {{DB_NAME}}.`fact_agg_genotypes_counts_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format
+
+statement: CREATE TABLE IF NOT EXISTS {{DB_NAME}}.fact_agg_genotypes_counts_{{DATA_FORMAT}} (
+   `f_gc_id` bigint,
+  `f_ensembl_gp_id` bigint,
+  `f_refseq_gp_id` bigint,
+  `f_v_id` bigint,
+  `f_variant_name` string,
+  `f_pos` bigint,
+  `f_ref` string,
+  `f_alt` string,
+  `f_d_id` bigint,
+  `f_sum_total_depth` bigint,
+  `f_sum_alter_depth` bigint,
+  `f_cnt_alter` bigint,
+  `geo_country_name_en` string,
+  `geo_region_id` int,
+  `geo_region_name_en` string,
+  `f_country_total_samples` bigint,
+  `f_region_total_samples` bigint,
+  `f_total_samples` bigint,
+  `f_genotype` string,
+  `f_chr` string,
+  `f_geo_id` bigint)
+ TBLPROPERTIES(
+  'storage_handler' = 'com.cloudera.kudu.hive.KuduStorageHandler',
+  'kudu.table_name' = 'fact_{{DATA_FORMAT}}',
+  'kudu.master_addresses' = '{{KUDU_MASTER}}',
+  'kudu.key_columns' = 'f_gc_id'
+ )
