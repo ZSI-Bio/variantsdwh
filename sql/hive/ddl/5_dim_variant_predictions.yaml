@@ -1,0 +1,41 @@
+queryId: DDL_HIVE_{{DATA_FORMAT}}_5
+
+queryType: CREATE
+
+queryEngine: Hive
+
+storageFormat: "{{DATA_FORMAT}}"
+
+queryDesc: Create {{DB_NAME}}.`dim_variant_predictions_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format
+
+statement: CREATE TABLE IF NOT EXISTS {{DB_NAME}}.`dim_variant_predictions_{{DATA_FORMAT}}`(
+   `v_id` bigint,
+   `v_chr` string,
+   `v_pos` int,
+   `v_alt` string,
+   `v_synonymic` string,
+   `v_rs_dbsnp142` string,
+   `v_transcript_id` string,
+   `v_sift_score` float,
+   `v_sift_rankscore` float,
+   `v_sift_pred` string,
+   `v_fathmm_score` float,
+   `v_fathmm_rankscore` float,
+   `v_fathmm_pred` string,
+   `v_metasvm_score` float,
+   `v_metasvm_rankscore` float,
+   `v_metasvm_pred` string,
+   `v_cadd_score` float,
+   `v_cadd_rankscore` float,
+   `v_cadd_phred` float,
+   `v_metalr_score` float,
+   `v_metalr_rankscore` float,
+   `v_metalr_pred` string,
+   `v_polyphen2_hvar_score` float,
+   `v_polyphen2_hvar_rankscore` float,
+   `v_polyphen2_hvar_pred` string,
+   `v_mutation_taster_score` float,
+   `v_mutation_taster_rankscore` float,
+   `v_mutation_taster_pred` string,
+   `v_variant_name` string)
+  STORED AS {{DATA_FORMAT}}

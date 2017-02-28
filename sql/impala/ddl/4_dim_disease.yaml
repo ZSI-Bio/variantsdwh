@@ -1,0 +1,22 @@
+---
+
+queryId: DDL_IMPALA_{{DATA_FORMAT}}_4
+
+queryType: CREATE
+
+queryEngine: Impala
+
+storageFormat: "{{DATA_FORMAT}}"
+
+queryDesc: Create {{DB_NAME}}.`dim_disease_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format
+
+statement: CREATE EXTERNAL TABLE IF NOT EXISTS {{DB_NAME}}.dim_disease_{{DATA_FORMAT}} ( 
+  `d_id` bigint,
+   `d_omim_id` string,
+   `d_disease` string)
+ TBLPROPERTIES(
+  'storage_handler' = 'com.cloudera.kudu.hive.KuduStorageHandler',
+  'kudu.table_name' = 'dim_disease_{{DATA_FORMAT}}',
+  'kudu.master_addresses' = '{{KUDU_MASTER}}',
+  'kudu.key_columns' = 'd_id'
+ )

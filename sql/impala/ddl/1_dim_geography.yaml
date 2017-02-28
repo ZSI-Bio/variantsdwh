@@ -1,0 +1,27 @@
+---
+
+queryId: DDL_IMPALA_{{DATA_FORMAT}}_1
+
+queryType: CREATE
+
+queryEngine: Impala
+
+storageFormat: "{{DATA_FORMAT}}"
+
+queryDesc: Create {{DB_NAME}}.`dim_geography_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format
+
+statement: CREATE EXTERNAL TABLE IF NOT EXISTS {{DB_NAME}}.dim_geography_{{DATA_FORMAT}} ( 
+   `geo_id` int,
+   `geo_code` string,
+   `geo_country_name_en` string,
+   `geo_region_id` int,
+   `geo_region_name_en` string,
+   `geo_sub_region_id` int,
+   `geo_sub_region_name_en` string
+ )
+ TBLPROPERTIES(
+  'storage_handler' = 'com.cloudera.kudu.hive.KuduStorageHandler',
+  'kudu.table_name' = 'dim_geography_{{DATA_FORMAT}}',
+  'kudu.master_addresses' = '{{KUDU_MASTER}}',
+  'kudu.key_columns' = 'geo_id'
+ )

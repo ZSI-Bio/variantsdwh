@@ -1,0 +1,32 @@
+---
+
+queryId: DDL_IMPALA_{{DATA_FORMAT}}_2
+
+queryType: CREATE
+
+queryEngine: Impala
+
+storageFormat: "{{DATA_FORMAT}}"
+
+queryDesc: Create {{DB_NAME}}.`dim_genomic_position_ensembl_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format
+
+statement: CREATE EXTERNAL TABLE IF NOT EXISTS {{DB_NAME}}.dim_genomic_position_ensembl_{{DATA_FORMAT}} ( 
+   `gp_id` bigint,
+   `gp_chr` string,
+   `gp_start` int,
+   `gp_stop` int,
+   `gp_exon_num` int,
+   `gp_exon_count` int,
+   `gp_trans_id` string,
+   `iscanonical` boolean,
+   `ismerged` boolean,
+   `gp_gene_id` string,
+   `gp_hgnc_approved_gene_name` string,
+   `gp_cyto` string
+ )
+ TBLPROPERTIES(
+  'storage_handler' = 'com.cloudera.kudu.hive.KuduStorageHandler',
+  'kudu.table_name' = 'dim_genomic_position_ensembl_{{DATA_FORMAT}}',
+  'kudu.master_addresses' = '{{KUDU_MASTER}}',
+  'kudu.key_columns' = 'gp_id'
+ )

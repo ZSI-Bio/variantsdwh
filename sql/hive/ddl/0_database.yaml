@@ -1,0 +1,12 @@
+---
+queryId: DDL_HIVE_{{DATA_FORMAT}}_0
+
+queryType: CREATE
+
+queryEngine: Hive
+
+storageFormat: "{{DATA_FORMAT}}"
+
+queryDesc: Create {{DB_NAME}} database
+
+statement: CREATE DATABASE IF NOT EXISTS {{DB_NAME}}

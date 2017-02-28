@@ -1,0 +1,15 @@
+queryId: DDL_HIVE_{{DATA_FORMAT}}_4
+
+queryType: CREATE
+
+queryEngine: Hive
+
+storageFormat: "{{DATA_FORMAT}}"
+
+queryDesc: Create {{DB_NAME}}.`dim_disease_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format
+
+statement: CREATE TABLE IF NOT EXISTS {{DB_NAME}}.`dim_disease_{{DATA_FORMAT}}`(
+   `d_id` bigint,
+   `d_omim_id` string,
+   `d_disease` string)
+  STORED AS {{DATA_FORMAT}}
