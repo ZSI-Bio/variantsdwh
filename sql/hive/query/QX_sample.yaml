@@ -9,4 +9,4 @@ storageFormat: "{{DATA_FORMAT}}"
 
 queryDesc: Select count from {{DB_NAME}}.`dim_geography_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format
 
-statement: SELECT COUNT(*) FROM {{DB_NAME}}.`dim_geography_{{DATA_FORMAT}}`
+statement: EXPLAIN SELECT COUNT(*) FROM {{DB_NAME}}.`dim_geography_{{DATA_FORMAT}}`

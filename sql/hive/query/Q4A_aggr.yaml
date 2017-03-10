@@ -9,7 +9,7 @@ storageFormat: "{{DATA_FORMAT}}"
 
 queryDesc: Select count from {{DB_NAME}}.`dim_geography_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format
 
-statement: SELECT gp_trans_id,
+statement: EXPLAIN SELECT gp_trans_id,
                   Min(avg_total_depth)                     AS min,
                   Percentile_approx(avg_total_depth, 0.25) AS 25_percentile,
                   Percentile_approx(avg_total_depth, 0.5)  AS median,
@@ -19,7 +19,7 @@ statement: SELECT gp_trans_id,
                           f_chr,
                           f_pos,
                           f_ensembl_gp_id
-                   FROM   {{DB_NAME}}.fact_agg_counts_{{DATA_FORMAT}}
+                   FROM   {{DB_NAME}}.fact_agg_genotypes_counts_{{DATA_FORMAT}}
                    GROUP  BY f_chr,
                              f_pos,
                              f_ensembl_gp_id) facts

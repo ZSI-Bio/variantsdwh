@@ -1,4 +1,4 @@
-queryId: DDL_HIVE_{{DATA_FORMAT}}_1
+queryId: DDL_HIVE_SPARK_{{DATA_FORMAT}}_1
 
 queryType: CREATE
 

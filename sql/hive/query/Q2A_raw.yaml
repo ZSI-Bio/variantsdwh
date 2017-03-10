@@ -1,5 +1,5 @@
 ---
-queryId: Q1A_RAW_HIVE_{{DATA_FORMAT}}
+queryId: Q2A_RAW_HIVE_{{DATA_FORMAT}}
 
 queryType: SELECT
 
@@ -9,16 +9,25 @@ storageFormat: "{{DATA_FORMAT}}"
 
 queryDesc: Select count from {{DB_NAME}}.`dim_geography_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format
 
-statement: SELECT f_chr , f_pos, f_alt, geo_region_name_en, var_cnt, geo_sample_cnt , (var_cnt / (2 * geo_sample_cnt)) as var_frequency
-    FROM ( SELECT f_chr  , f_pos, f_alt, geo_region_name_en, SUM(genotype_val) as var_cnt, geo_sample_cnt
-          FROM (SELECT DISTINCT f_chr , f_pos, f_alt, f_sample_id, f_geo_id, if(f_genotype='1/1',2,1) as genotype_val
-                FROM {{DB_NAME}}.fact_{{DATA_FORMAT}}) fact_{{DATA_FORMAT}}
-                JOIN {{DB_NAME}}.dim_geography_{{DATA_FORMAT}} ON f_geo_id = geo_id
-                JOIN (
-                  SELECT  geo_region_name_en as grn, COUNT(DISTINCT f_sample_id) as geo_sample_cnt
-                  FROM {{DB_NAME}}.fact_{{DATA_FORMAT}} JOIN {{DB_NAME}}.dim_geography_{{DATA_FORMAT}} ON f_geo_id = geo_id
-                  GROUP BY geo_region_name_en) geo_sample_cnt
-                ON geo_region_name_en = grn
-                GROUP BY f_chr, f_pos, f_alt, geo_region_name_en, geo_sample_cnt
-    LIMIT 10
-    ) dummy
+statement: EXPLAIN SELECT gp_trans_id,
+                  COUNT(DISTINCT f_variant_name) as distinct_variant_cnt,
+                  SUM(var_frequency) as cum_freq
+           FROM {{DB_NAME}}.dim_genomic_position_ensembl_{{DATA_FORMAT}}
+           LEFT JOIN (
+                     SELECT f_chr,
+                            f_pos,
+                            f_alt,
+                            f_v_id,
+                            f_variant_name,
+                            cast(SUM(if(f_genotype='1/1',2,1)) as double) / (2*s_cnt) as var_frequency,
+                            f_ensembl_gp_id
+                     FROM {{DB_NAME}}.fact_{{DATA_FORMAT}}
+                     LEFT JOIN (SELECT COUNT(DISTINCT f_sample_id) as s_cnt
+                               FROM {{DB_NAME}}.fact_{{DATA_FORMAT}}) sam_cnt  ON 1 = 1
+                     WHERE f_ensembl_gp_id IS NOT NULL
+                     GROUP BY f_chr, f_pos, f_alt, f_variant_name, f_v_id, s_cnt, f_ensembl_gp_id) var_freq
+           ON f_ensembl_gp_id=gp_id
+           LEFT JOIN {{DB_NAME}}.dim_variant_predictions_{{DATA_FORMAT}} ON v_id=f_v_id
+           WHERE var_frequency <= 0.01 and v_fathmm_pred = 'D'
+           GROUP BY gp_trans_id
+           LIMIT 10

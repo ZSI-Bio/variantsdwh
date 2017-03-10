@@ -1,5 +1,5 @@
 ---
-queryId: Q3B_AGGR_DENORM_HIVE_{{DATA_FORMAT}}
+queryId: Q4A_AGGR_DENORM_HIVE_{{DATA_FORMAT}}
 
 queryType: SELECT
 
@@ -9,22 +9,23 @@ storageFormat: "{{DATA_FORMAT}}"
 
 queryDesc: Select count from {{DB_NAME}}.`dim_geography_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format
 
-statement: SELECT gp_trans_id,
-                  gp_exon_num,
-                  COUNT(DISTINCT f_variant_name) as distinct_variant_cnt,
-                  SUM(var_frequency) as cum_freq
-           FROM (
-           SELECT f_chr,
-                  f_pos,
-                  f_alt,
-                  f_variant_name,
-                  gp_trans_id,
-                  gp_exon_num,
-                  cast(SUM(if(f_genotype='1/1',2,1) * f_cnt_alter) as double) / (2 * f_total_samples) as var_frequency
-           FROM {{DB_NAME}}.fact_agg_genotypes_counts_dims_{{DATA_FORMAT}}
-           WHERE v_fathmm_pred = 'D' and f_ensembl_gp_id IS NOT NULL
-           GROUP BY f_chr, f_pos, f_alt, f_variant_name, gp_trans_id,gp_exon_num, f_total_samples
-           ) t
-           WHERE var_frequency <= 0.01 AND d_omim_id='OMIM:308230'
-           GROUP BY gp_trans_id,gp_exon_num
-           LIMIT 10
+statement: EXPLAIN SELECT gp_trans_id,
+                  Min(avg_total_depth)                     AS min,
+                  Percentile_approx(avg_total_depth, 0.25) AS 25_percentile,
+                  Percentile_approx(avg_total_depth, 0.5)  AS median,
+                  Percentile_approx(avg_total_depth, 0.75) AS 75_percentile,
+                  Max(avg_total_depth)                     AS max
+           FROM   (SELECT SUM(f_sum_total_depth) / SUM(f_cnt_alter) AS avg_total_depth,
+                          f_chr,
+                          f_pos,
+                          f_ensembl_gp_id
+                   FROM   {{DB_NAME}}.fact_agg_genotypes_counts_dims_{{DATA_FORMAT}}
+                   GROUP  BY f_chr,
+                             f_pos,
+                             f_ensembl_gp_id) facts
+                  RIGHT JOIN {{DB_NAME}}.dim_genomic_position_ensembl_{{DATA_FORMAT}}
+                          ON f_ensembl_gp_id = gp_id
+           GROUP  BY gp_trans_id
+           ORDER  BY gp_trans_id
+           limit 10
+

@@ -1,5 +1,5 @@
 ---
-queryId: Q3A_AGGR_HIVE_{{DATA_FORMAT}}
+queryId: Q3B_AGGR_HIVE_{{DATA_FORMAT}}
 
 queryType: SELECT
 
@@ -9,9 +9,10 @@ storageFormat: "{{DATA_FORMAT}}"
 
 queryDesc: Select count from {{DB_NAME}}.`dim_geography_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format
 
-statement: SELECT gp_trans_id,
-                  COUNT(DISTINCT f_variant_name) as distinct_variant_cnt,
-                  SUM(var_frequency) as cum_freq
+statement: EXPLAIN SELECT gp_trans_id,
+                gp_exon_num,
+                COUNT(DISTINCT f_variant_name) as distinct_variant_cnt,
+                SUM(var_frequency) as cum_freq
            FROM {{DB_NAME}}.dim_genomic_position_ensembl_{{DATA_FORMAT}}
            LEFT JOIN (
                      SELECT f_chr,
@@ -29,5 +30,5 @@ statement: SELECT gp_trans_id,
            LEFT JOIN {{DB_NAME}}.dim_variant_predictions_{{DATA_FORMAT}} ON f_v_id = v_id
            LEFT JOIN {{DB_NAME}}.dim_disease_{{DATA_FORMAT}} ON d_id=f_d_id
            WHERE var_frequency <= 0.01 and v_fathmm_pred = 'D' AND d_omim_id='OMIM:308230'
-           GROUP BY gp_trans_id
+           GROUP BY gp_trans_id,gp_exon_num
            LIMIT 10

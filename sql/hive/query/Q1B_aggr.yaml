@@ -1,5 +1,5 @@
 ---
-queryId: Q1A_AGGR_{{DATA_FORMAT}}
+queryId: Q1B_AGGR_{{DATA_FORMAT}}
 
 queryType: SELECT
 
@@ -9,15 +9,31 @@ storageFormat: "{{DATA_FORMAT}}"
 
 queryDesc: Select count from {{DB_NAME}}.`dim_geography_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format
 
-statement: SELECT f_chr, f_pos, f_alt, geo_region_name_en, var_cnt, f_region_total_samples, (var_cnt / (2 * f_region_total_samples)) as var_frequency
-           FROM(
-                SELECT  f_chr , f_pos, f_alt, geo_region_id, SUM(genotype_val * f_cnt_alter) as var_cnt, f_region_total_samples
-                FROM
-                    (SELECT DISTINCT f_chr , f_pos, f_alt, f_d_id , f_geo_id, geo_region_id , if(f_genotype='1/1',2,1) as genotype_val, f_cnt_alter, f_region_total_samples
-                    FROM {{DB_NAME}}.fact_agg_genotypes_counts_{{DATA_FORMAT}} ) t
-           GROUP BY f_chr, f_pos, f_alt, geo_region_id, f_region_total_samples
-           ) dummy
-           LEFT JOIN (SELECT DISTINCT geo_region_id, geo_region_name_en
-                      FROM {{DB_NAME}}.dim_geography_{{DATA_FORMAT}}) d
-           ON d.geo_region_id = dummy.geo_region_id
-           LIMIT 10
+statement: EXPLAIN SELECT f_chr,
+                          f_pos,
+                          f_alt,
+                          geo_country_name_en,
+                          var_cnt,
+                          geo_sample_cnt,
+                         (var_cnt / (2 * geo_sample_cnt)) as var_frequency
+                   FROM
+                   (
+                   SELECT f_chr,
+                          f_pos,
+                          f_alt,
+                          geo_country_name_en,
+                         SUM(genotype_val * f_cnt_alter) as var_cnt,
+                         f_country_total_samples as geo_sample_cnt
+                   FROM (SELECT DISTINCT f_chr,
+                                         f_pos,
+                                        f_alt,
+                                        f_geo_id,
+                                        f_d_id,
+                                        f_country_total_samples,
+                                        f_cnt_alter,
+                                        if(f_genotype='1/1',2,1) as genotype_val
+                         FROM {{DB_NAME}}.fact_agg_genotypes_counts_{{DATA_FORMAT}}) fact_optimized
+                   JOIN {{DB_NAME}}.dim_geography_{{DATA_FORMAT}} ON f_geo_id = geo_id
+                   GROUP BY f_chr, f_pos, f_alt, geo_country_name_en, f_country_total_samples
+                   LIMIT 10
+                   ) dummy

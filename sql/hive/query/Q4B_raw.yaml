@@ -1,5 +1,5 @@
 ---
-queryId: Q4A_RAW_HIVE_{{DATA_FORMAT}}
+queryId: Q4B_RAW_HIVE_{{DATA_FORMAT}}
 
 queryType: SELECT
 
@@ -9,20 +9,20 @@ storageFormat: "{{DATA_FORMAT}}"
 
 queryDesc: Select count from {{DB_NAME}}.`dim_geography_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format
 
-statement: SELECT gp_trans_id,
+statement: EXPLAIN SELECT gp_trans_id,
+                  gp_exon_num,
                   min(avg_total_depth) as min,
                   percentile_approx(avg_total_depth, 0.25) as 25_percentile,
                   percentile_approx(avg_total_depth, 0.5) as median,
                   percentile_approx(avg_total_depth, 0.75) as 75_percentile,
                   max(avg_total_depth) as max
-           FROM
-             (SELECT avg(f_total_depth) as avg_total_depth,
-                     f_chr,
-                     f_pos,
-                     f_ensembl_gp_id
-             FROM {{DB_NAME}}.fact_{{DATA_FORMAT}}
-             GROUP BY f_chr, f_pos, f_ensembl_gp_id) facts
+           FROM (SELECT avg(f_total_depth) as avg_total_depth,
+                        f_chr,
+                        f_pos,
+                        f_ensembl_gp_id
+                FROM {{DB_NAME}}.fact_{{DATA_FORMAT}}
+                GROUP BY f_chr, f_pos, f_ensembl_gp_id) facts
            RIGHT JOIN {{DB_NAME}}.dim_genomic_position_ensembl_{{DATA_FORMAT}} ON f_ensembl_gp_id = gp_id
-           GROUP BY gp_trans_id
-           ORDER BY gp_trans_id
-           limit 10
+           WHERE gp_trans_id = 'ENST00000424598'
+           GROUP BY gp_trans_id, gp_exon_num
+           ORDER BY gp_exon_num
