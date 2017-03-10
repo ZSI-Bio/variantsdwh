@@ -1,0 +1,13 @@
+---
+queryId: Q8_{{DATA_FORMAT}}
+
+queryType: SELECT
+
+queryEngine: Hive
+
+storageFormat: "{{DATA_FORMAT}}"
+
+queryDesc: Select count from {{DB_NAME}}.`dim_geography_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format
+
+statement: EXPLAIN SELECT COUNT(DISTINCT variant_name) FROM {{DB_NAME}}.fact_{{DATA_FORMAT}} WHERE f_alter_depth/ f_total_depth >0.9 AND f_sample_id =13685
+

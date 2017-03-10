@@ -1,0 +1,31 @@
+EXPLAIN SELECT f_chr,
+                  f_pos,
+                  f_alt,
+                  geo_country_name_en,
+                  var_cnt,
+                  f_country_total_samples,
+                  (var_cnt / (2 * f_country_total_samples)) as var_frequency
+           FROM(
+                SELECT  f_chr,
+                        f_pos,
+                        f_alt,
+                        geo_country_name_en,
+                        SUM(genotype_val * f_cnt_alter) as var_cnt,
+                        f_country_total_samples
+                FROM
+                    (SELECT DISTINCT f_chr,
+                                     f_pos,
+                                     f_alt,
+                                     f_d_id,
+                                     f_geo_id,
+                                     geo_country_id,
+                                     if(f_genotype='1/1',2,1) as genotype_val,
+                                     f_cnt_alter,
+                                     f_country_total_samples
+                    FROM dwh_dev2.fact_agg_genotypes_counts_orc ) t
+           GROUP BY f_chr, f_pos, f_alt, geo_country_name_en, f_country_total_samples
+           ) dummy
+           LEFT JOIN (SELECT DISTINCT geo_country_id, geo_country_name_en
+                      FROM dwh_dev2.dim_geography_orc) d
+           ON d.geo_country_id = dummy.geo_country_id
+           LIMIT 10
