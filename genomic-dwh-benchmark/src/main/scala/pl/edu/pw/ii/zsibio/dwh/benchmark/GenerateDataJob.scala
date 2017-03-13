@@ -110,6 +110,7 @@ object GenerateDataJob {
               , alt as ALTERNATIVE
               , HG19_CHR
               , `hg19_pos(1-based)` as HG19_POS
+              , 10.0 as "MEAN"
               , EXAC_AMR_AF
               , EXAC_NFE_AF
               , EXAC_FIN_AF
@@ -117,16 +118,17 @@ object GenerateDataJob {
               , EXAC_EAS_AF
               , EXAC_AFR_AF
         FROM $annotationsTable
-        WHERE EXAC_AMR_AF IS NOT NULL AND
-              EXAC_NFE_AF IS NOT NULL AND
-              EXAC_FIN_AF IS NOT NULL AND
-              EXAC_SAS_AF IS NOT NULL AND
-              EXAC_EAS_AF IS NOT NULL AND
-              EXAC_AFR_AF IS NOT NULL""")
+        WHERE EXAC_AMR_AF IS NOT NULL AND EXAC_AMR_AF <> '.'
+              EXAC_NFE_AF IS NOT NULL AND EXAC_NFE_AF <> '.'
+              EXAC_FIN_AF IS NOT NULL AND EXAC_FIN_AF <> '.'
+              EXAC_SAS_AF IS NOT NULL AND EXAC_SAS_AF <> '.'
+              EXAC_EAS_AF IS NOT NULL AND EXAC_EAS_AF <> '.'
+              EXAC_AFR_AF IS NOT NULL AND EXAC_AFR_AF <> '.' """)
       .map(_.getValuesMap[Any](Seq("REFERENCE"
         , "ALTERNATIVE"
         , "HG19_CHR"
         , "HG19_POS"
+        , "MEAN"
         , "EXAC_AMR_AF"
         , "EXAC_NFE_AF"
         , "EXAC_FIN_AF"
