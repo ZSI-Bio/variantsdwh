@@ -123,7 +123,7 @@ object GenerateDataJob {
               EXAC_FIN_AF IS NOT NULL AND EXAC_FIN_AF <> '.' AND
               EXAC_SAS_AF IS NOT NULL AND EXAC_SAS_AF <> '.' AND
               EXAC_EAS_AF IS NOT NULL AND EXAC_EAS_AF <> '.' AND
-              EXAC_AFR_AF IS NOT NULL AND EXAC_AFR_AF <> '.' """)
+              EXAC_AFR_AF IS NOT NULL AND EXAC_AFR_AF <> '.' """.stripMargin)
       .map(_.getValuesMap[Any](Seq("REFERENCE"
         , "ALTERNATIVE"
         , "HG19_CHR"
