@@ -106,11 +106,10 @@ object GenerateDataJob {
 
   def readAnnotations(sqlContext: HiveContext, annotationsTable: String): RDD[Map[String, Any]] = {
     sqlContext.sql(
-      s"""SELECT REFERENCE
-              , ALTERNATIVE
+      s"""SELECT ref as REFERENCE
+              , alt as ALTERNATIVE
               , HG19_CHR
-              , HG19_POS
-              , MEAN
+              , `hg19_pos(1-based)` as HG19_POS
               , EXAC_AMR_AF
               , EXAC_NFE_AF
               , EXAC_FIN_AF
@@ -128,7 +127,6 @@ object GenerateDataJob {
         , "ALTERNATIVE"
         , "HG19_CHR"
         , "HG19_POS"
-        , "MEAN"
         , "EXAC_AMR_AF"
         , "EXAC_NFE_AF"
         , "EXAC_FIN_AF"
