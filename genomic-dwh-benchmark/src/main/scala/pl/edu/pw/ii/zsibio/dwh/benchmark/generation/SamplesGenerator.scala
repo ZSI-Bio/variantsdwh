@@ -33,7 +33,7 @@ class SamplesGenerator(config: GenerationConfiguration) extends Serializable {
         |population,
         |geo_id as id,
         |geo_country_name_en as countryName,
-        |geo_region_name_en as region"
+        |geo_region_name_en as region
         |FROM
         |${config.countryPopulation}
       """.stripMargin)
