@@ -23,7 +23,7 @@ case class WestAsianConfig(per: Double) extends RegionConfig("EXAC_EAS_AF", "Asi
 
 case class AfricaConfig(per: Double) extends RegionConfig("EXAC_AFR_AF", "Africa", per)
 
-case class GenerationConfiguration(dictPath: String
+case class GenerationConfiguration(countryPopulation: String
                                    , americasConfig: AmericasConfig = AmericasConfig(16)
                                    , europaConfig: EuropaConfig = EuropaConfig(16)
                                    , finnishConfig: FinnishConfig = FinnishConfig(17)
