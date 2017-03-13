@@ -4,9 +4,11 @@ import java.lang
 
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.sql.{Row, SQLContext}
 import pl.edu.pw.ii.zsibio.dwh.benchmark.generation.model.GeneratedSample
 import pl.edu.pw.ii.zsibio.dwh.benchmark.utils.Probability._
+
 import scala.util.Random
 
 /**
@@ -16,7 +18,7 @@ class SamplesGenerator(config: GenerationConfiguration) extends Serializable {
 
 
   def generate(sc: SparkContext, n: Int): RDD[GeneratedSample] = {
-    val sqlContext = new SQLContext(sc)
+    val sqlContext = new HiveContext(sc)
     import sqlContext.implicits._
 
 /*    val population = sqlContext.read
