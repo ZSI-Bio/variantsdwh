@@ -111,12 +111,13 @@ object GenerateDataJob {
               , HG19_CHR
               , `hg19_pos(1-based)` as HG19_POS
               , 10.0 as `MEAN`
-              , CAST(EXAC_AMR_AF as DOUBLE)
-              , CAST(EXAC_NFE_AF as DOUBLE)
-              , CAST(EXAC_FIN_AF as DOUBLE)
-              , CAST(EXAC_SAS_AF as DOUBLE)
-              , CAST(EXAC_EAS_AF as DOUBLE)
-              , CAST(EXAC_AFR_AF as DOUBLE)
+                       , CAST(EXAC_AMR_AF as DOUBLE)
+         |              , CAST(EXAC_NFE_AF as DOUBLE)
+         |              , CAST(EXAC_FIN_AF as DOUBLE)
+         |              , CAST(EXAC_SAS_AF as DOUBLE)
+         |              , CAST(EXAC_EAS_AF as DOUBLE)
+         |              , CAST(EXAC_AFR_AF as DOUBLE)
+        FROM $annotationsTable
         WHERE EXAC_AMR_AF IS NOT NULL AND EXAC_AMR_AF <> '.' AND
               EXAC_NFE_AF IS NOT NULL AND EXAC_NFE_AF <> '.' AND
               EXAC_FIN_AF IS NOT NULL AND EXAC_FIN_AF <> '.' AND
