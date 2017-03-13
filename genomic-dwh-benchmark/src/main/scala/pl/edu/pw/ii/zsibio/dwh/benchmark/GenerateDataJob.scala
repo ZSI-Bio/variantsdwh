@@ -21,7 +21,7 @@ object GenerateDataJob {
 
     val annotationsTable = opt[String](required = false, default = Some("ANNOTATIONS"), descr = "Name of a table in " +
       "hive that contains dbNSFP annotations.")
-    val countyPopulation = opt[String](required = true, descr = "Name of a table with their population for " +
+    val countryPopulation = opt[String](required = true, descr = "Name of a table with their population for " +
       "generating samples.")
     val tempTable = opt[String](required = true, descr = "Temp table name where to store generated variants.")
    /* val factTable = opt[String](required = true, descr = "Fact table with all dim ids to store generated variants.")
@@ -37,6 +37,7 @@ object GenerateDataJob {
 
   def main(args: Array[String]) {
     val params = new Conf(args)
+    params.verify()
 
     val sparkConf = new SparkConf().setAppName("Generate random variants")
     val sc = new SparkContext(sparkConf)
@@ -45,7 +46,7 @@ object GenerateDataJob {
     val annotations = readAnnotations(sqlContext, params.annotationsTable())
 
     import sqlContext.implicits._
-    new SamplesGenerator(new GenerationConfiguration(params.countyPopulation()))
+    new SamplesGenerator(new GenerationConfiguration(params.countryPopulation()))
       .generate(sc, params.samplesNumber()).toDF().registerTempTable("samples")
 
     sqlContext.sql("CREATE TABLE samplesTemp STORED AS ORC AS SELECT * FROM samples")
