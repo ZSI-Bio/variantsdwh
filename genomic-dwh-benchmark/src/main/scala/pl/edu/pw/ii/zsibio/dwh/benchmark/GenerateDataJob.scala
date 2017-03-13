@@ -56,14 +56,14 @@ object GenerateDataJob {
       , if (row.getLong(2) == -1) null.asInstanceOf[java.lang.Long] else row.getLong(2)
       , row.getString(3)))
 
-    //val annCached = annotations.repartition(params.annotationsPartitions())
+    val annCached = annotations.repartition(params.annotationsPartitions())
 
     /*val samCached = samples.cache()
     annCached.count()
     samCached.count()
 */
     val m = DataGenerator.generate(samples
-      , annotations)
+      , annCached)
       //.repartition(params.outputPartitions())
 
     m.toDF().registerTempTable("resultTemp")
