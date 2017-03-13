@@ -110,7 +110,7 @@ object GenerateDataJob {
               , alt as ALTERNATIVE
               , HG19_CHR
               , `hg19_pos(1-based)` as HG19_POS
-              , 10.0 as "MEAN"
+              , 10.0 as `MEAN`
               , EXAC_AMR_AF
               , EXAC_NFE_AF
               , EXAC_FIN_AF
