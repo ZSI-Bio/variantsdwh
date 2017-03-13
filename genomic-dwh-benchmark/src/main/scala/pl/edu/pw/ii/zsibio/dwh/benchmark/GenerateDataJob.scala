@@ -58,11 +58,11 @@ object GenerateDataJob {
 
     val annCached = annotations.repartition(params.annotationsPartitions())
 
-    /*val samCached = samples.cache()
+    val samCached = samples.cache()
     annCached.count()
     samCached.count()
-*/
-    val m = DataGenerator.generate(samples
+
+    val m = DataGenerator.generate(samCached
       , annCached)
       //.repartition(params.outputPartitions())
 
