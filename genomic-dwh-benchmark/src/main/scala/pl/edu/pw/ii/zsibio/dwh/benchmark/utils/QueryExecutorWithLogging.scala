@@ -55,7 +55,7 @@ object QueryExecutorWithLogging {
     val rs = conn.executeQuery(query.statement.toLowerCase,true)
     rs.rs.next()
     val result = s"${Calendar.getInstance().getTime().toString},${query.queryId}," +
-      s"${query.queryEngine},${query.storageFormat},${rs.timing.get.getTiming()}, ${dryRun.toString}\n"
+      s"${query.queryEngine},${query.storageFormat},${rs.timing.get.getTiming()},${dryRun.toString}\n"
     log.info(s"Result: ${result}")
     val writer = new PrintWriter(new FileOutputStream(new File(logFile),true))
     writer.write(result)
