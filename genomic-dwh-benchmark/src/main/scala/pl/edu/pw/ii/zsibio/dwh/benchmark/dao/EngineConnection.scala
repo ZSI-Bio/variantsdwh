@@ -28,7 +28,7 @@ case class QueryResult(rs:ResultSet, timing:Option[ExecutionTiming])
 object ConnectDriver extends Enumeration {
 
   type Driver = Value
-  val HIVE, SPARK, IMPALA_JDBC, IMPALA_THRIFT, PRESTO  = Value
+  val HIVE, SPARK, IMPALA_JDBC, IMPALA_THRIFT, PRESTO, SPARK1, SPARK2, UKNOWN  = Value
 
 }
 

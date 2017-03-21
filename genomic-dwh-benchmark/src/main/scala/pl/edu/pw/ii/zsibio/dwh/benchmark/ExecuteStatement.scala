@@ -96,8 +96,18 @@ object ExecuteStatement {
     allFiles.map {queryFile =>
       val query = QueryExecutorWithLogging
             .parseQueryYAML(queryFile.getAbsolutePath, runConf.storageType(), jobConf._2, kuduMaster,runConf.dbName(),runConf.dryRun())
-            .copy(queryEngine = jobConf._2.split(":")(1)) /*overrride query engine from cmd line*/
+            //.copy(queryEngine = jobConf._2.split(":")(1)) /*overrride query engine from cmd line*/
+        .copy(queryEngine =  {
+          if (runConf.useHive()) ConnectDriver.HIVE
+          else if (runConf.useSpark1()) ConnectDriver.SPARK1
+          else if (runConf.useSpark2()) ConnectDriver.SPARK2
+          else if (runConf.useImpala()) ConnectDriver.IMPALA_JDBC
+          else if (runConf.usePresto()) ConnectDriver.PRESTO
+          else
+            ConnectDriver.UKNOWN
+        }.toString() )
 
+        /*overrride query engine from cmd line*/
       if (query.queryType.toLowerCase() == "create" && !query.statement.toLowerCase().contains("create database")
         && query.storageFormat.toLowerCase() == "kudu") {
 
