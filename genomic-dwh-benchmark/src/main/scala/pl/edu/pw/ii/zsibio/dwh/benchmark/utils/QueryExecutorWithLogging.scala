@@ -14,7 +14,8 @@ import pl.edu.pw.ii.zsibio.dwh.benchmark.utils.QueryType.QueryType
   * Created by marek on 15.01.17.
   */
 
-case class Query(queryId:String, queryType:String, queryEngine:String, storageFormat:String,queryDesc:String, statement:String)
+case class Query(queryId:String, queryType:String, queryEngine:String, storageFormat:String,queryDesc:String,
+                 statement:String, dryRun:Boolean = false)
 
 object QueryType extends Enumeration {
 
@@ -26,7 +27,7 @@ object QueryType extends Enumeration {
 object QueryExecutorWithLogging {
   val log = Logger.getLogger("pl.edu.pw.ii.zsibio.dwh.benchmark.utils.QueryExecutorWithLogging")
   object QueryYamlProtocol extends DefaultYamlProtocol {
-    implicit val queryFormat = yamlFormat6(Query)
+    implicit val queryFormat = yamlFormat7(Query)
   }
 
 
@@ -53,7 +54,8 @@ object QueryExecutorWithLogging {
   private def logQuery(conn:EngineConnection, query: Query, logFile:String) ={
     val rs = conn.executeQuery(query.statement.toLowerCase,true)
     rs.rs.next()
-    val result = s"${Calendar.getInstance().getTime().toString},${query.queryId},${query.queryEngine},${query.storageFormat},${rs.timing.get.getTiming()}\n"
+    val result = s"${Calendar.getInstance().getTime().toString},${query.queryId}," +
+      s"${query.queryEngine},${query.storageFormat},${rs.timing.get.getTiming()}, ${query.dryRun.toString}\n"
     log.info(s"Result: ${result}")
     val writer = new PrintWriter(new FileOutputStream(new File(logFile),true))
     writer.write(result)
@@ -75,7 +77,8 @@ object QueryExecutorWithLogging {
       queryId = replaceVars(query.queryId),
       queryDesc = replaceVars(query.queryDesc),
       storageFormat = replaceVars(query.storageFormat),
-      statement = replaceVars(query.statement.replaceAll(",",",\n").replaceAll("\\(","\\(  "))
+      statement = replaceVars(query.statement.replaceAll(",",",\n").replaceAll("\\(","\\(  ")),
+      dryRun = ifExplain
     )
   }
 
