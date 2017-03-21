@@ -81,6 +81,8 @@ object ExecuteStatement {
     allFiles.map {queryFile =>
       val query = QueryExecutorWithLogging
             .parseQueryYAML(queryFile.getAbsolutePath, runConf.storageType(), jobConf._2, kuduMaster,runConf.dbName())
+            .copy(queryEngine = jobConf._2) /*overrride query engine from cmd line*/
+
       if (query.queryType.toLowerCase() == "create" && !query.statement.toLowerCase().contains("create database")
         && query.storageFormat.toLowerCase() == "kudu") {
 
