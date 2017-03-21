@@ -67,8 +67,8 @@ object QueryExecutorWithLogging {
         .replaceAll("\\{\\{DATA_FORMAT\\}\\}",storageType.toLowerCase)
         .replaceAll("\\{\\{DB_NAME\\}\\}",dbName.toLowerCase)
         .replaceAll("\\{\\{KUDU_MASTER\\}\\}",kuduMaster )
-        .replaceAll("\\{\\IF_EXPLAIN\\}\\}", if(ifExplain) "EXPLAIN " else "")
-        .replaceAll("\\{\\PERCENTILE_APPROX\\}\\}", if(query.queryEngine.toLowerCase=="presto") "approx_percentile" else "percentile_approx")
+        .replaceAll("\\{\\{IF_EXPLAIN\\}\\}", if(ifExplain) "EXPLAIN " else "")
+        .replaceAll("\\{\\{PERCENTILE_APPROX\\}\\}", if(query.queryEngine.toLowerCase=="presto") "approx_percentile" else "percentile_approx")
 
     }
     query.copy(
