@@ -22,10 +22,13 @@ object ExecuteStatement {
     banner("Usage: ...")
 
     val dbName = opt[String]("dbName",required = true, descr = "Database name in HiveMetastore" )
-    val useHive = opt[Boolean]("useHive",required = false, descr = "Create tables in Hive stored")
+    val useHive = opt[Boolean]("useHive",required = false, descr = "Run in Hive ")
     val storageType = opt[String]("storageType",required = true, descr = "Storage type parquet|orc|kudu|carbon")
     val useImpala = opt[Boolean]("useImpala",required = false, descr = "Create tables in Kudu" )
-    val usePresto = opt[Boolean]("usePresto",required = false, descr = "Create tables in Presto" )
+    val usePresto = opt[Boolean]("usePresto",required = false, descr = "Run in Presto" )
+    val useSpark1 = opt[Boolean]("useSpark1",required = false, descr = "Run in Spark 1.x" )
+    val useSpark2 = opt[Boolean]("useSpark2",required = false, descr = "Run in Spark 2.x" )
+
     //val connString =opt[String]("connString",required = false, descr = "Connection string for SparlSQL Server" )
     //val kuduMaster =opt[String]("kuduMaster",required = false, descr = "Kudu Master URL" )
     //val compression =opt[String]("compression",required = false, default= Some("gzip"), descr = "Compression algorithm gzip|snappy|none" )
@@ -46,6 +49,8 @@ object ExecuteStatement {
     val hiveConnString = confFile.getString("jdbc.hive.connection")
     val impalaConnString = confFile.getString("jdbc.impala.connection")
     val impalaThriftString = confFile.getString("impala.thrift.server")
+    val spark1ConnString = confFile.getString("jdbc.spark1.connection")
+    val spark2ConnString = confFile.getString("jdbc.spark2.connection")
     val kuduMaster = confFile.getString("kudu.master.server")
 
     val jdbcConfArray = new ArrayBuffer[(Driver, String)]()
@@ -54,6 +59,16 @@ object ExecuteStatement {
       jdbcConfArray.append((ConnectDriver.HIVE,hiveConnString ) )
     else if (runConf.useHive() && hiveConnString.isEmpty)
       throw new Exception("Hive to be used but Hive jdbc is missing in the conf file")
+
+    if( runConf.useSpark1() && !spark1ConnString.isEmpty)
+      jdbcConfArray.append((ConnectDriver.HIVE,spark1ConnString ) )
+    else if (runConf.useSpark1() && spark1ConnString.isEmpty)
+      throw new Exception("Spark 1.x to be used but Spark 1.x jdbc is missing in the conf file")
+
+    if( runConf.useSpark2() && !spark2ConnString.isEmpty)
+      jdbcConfArray.append((ConnectDriver.HIVE,spark2ConnString ) )
+    else if (runConf.useSpark2() && spark2ConnString.isEmpty)
+      throw new Exception("Spark 2.x to be used but Spark 2.x jdbc is missing in the conf file")
 
     if (runConf.usePresto() && !prestoConnString.isEmpty)
       jdbcConfArray.append((ConnectDriver.PRESTO,prestoConnString ))
