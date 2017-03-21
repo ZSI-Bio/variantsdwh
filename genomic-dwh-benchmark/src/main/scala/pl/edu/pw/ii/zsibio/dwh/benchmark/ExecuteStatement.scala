@@ -34,7 +34,7 @@ object ExecuteStatement {
     val queryDir =opt[String]("queryDir",required = true, descr = "A file containing a select statement in YAML format" )
     val logFile =opt[String]("logFile",required = false, descr = "A file for storing timing results", default = Some("results.csv") )
     val partNum =opt[Int]("partNum",required = true, descr = "Number of partitions",default = Some(100) )
-
+    val dryRun = opt[Boolean]("dryRun",required = false, descr = "Create tables in Kudu", default = Some(false) )
     verify()
   }
 
@@ -80,7 +80,7 @@ object ExecuteStatement {
         .sortBy(f => f.getName)
     allFiles.map {queryFile =>
       val query = QueryExecutorWithLogging
-            .parseQueryYAML(queryFile.getAbsolutePath, runConf.storageType(), jobConf._2, kuduMaster,runConf.dbName())
+            .parseQueryYAML(queryFile.getAbsolutePath, runConf.storageType(), jobConf._2, kuduMaster,runConf.dbName(),runConf.dryRun())
             .copy(queryEngine = jobConf._2) /*overrride query engine from cmd line*/
 
       if (query.queryType.toLowerCase() == "create" && !query.statement.toLowerCase().contains("create database")
