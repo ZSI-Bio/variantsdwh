@@ -120,7 +120,7 @@ object ExecuteStatement {
         connImpalaThrift.close*/
       }
 
-      QueryExecutorWithLogging.runStatement(query, conn, runConf.logFile())
+      QueryExecutorWithLogging.runStatement(query, conn, runConf.logFile(), runConf.dryRun())
 
     }
     conn.close

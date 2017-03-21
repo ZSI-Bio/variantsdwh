@@ -15,7 +15,7 @@ import pl.edu.pw.ii.zsibio.dwh.benchmark.utils.QueryType.QueryType
   */
 
 case class Query(queryId:String, queryType:String, queryEngine:String, storageFormat:String,queryDesc:String,
-                 statement:String, dryRun:Boolean = false)
+                 statement:String)
 
 object QueryType extends Enumeration {
 
@@ -27,15 +27,15 @@ object QueryType extends Enumeration {
 object QueryExecutorWithLogging {
   val log = Logger.getLogger("pl.edu.pw.ii.zsibio.dwh.benchmark.utils.QueryExecutorWithLogging")
   object QueryYamlProtocol extends DefaultYamlProtocol {
-    implicit val queryFormat = yamlFormat7(Query)
+    implicit val queryFormat = yamlFormat6(Query)
   }
 
 
-  def runStatement(query: Query, conn:EngineConnection, logFile:String) = {
+  def runStatement(query: Query, conn:EngineConnection, logFile:String, dryRun: Boolean) = {
     log.info(s"Running ${query.queryId} ... using ${query.queryEngine} engine")
     log.debug(s"Executing query: ${query.statement}")
     query.queryType.toLowerCase() match {
-      case "select" => logQuery(conn, query, logFile)
+      case "select" => logQuery(conn, query, logFile, dryRun)
       case _ => conn.executeUpdate(query.statement.toLowerCase)
     }
 
@@ -51,11 +51,11 @@ object QueryExecutorWithLogging {
 
   }
 
-  private def logQuery(conn:EngineConnection, query: Query, logFile:String) ={
+  private def logQuery(conn:EngineConnection, query: Query, logFile:String, dryRun:Boolean) ={
     val rs = conn.executeQuery(query.statement.toLowerCase,true)
     rs.rs.next()
     val result = s"${Calendar.getInstance().getTime().toString},${query.queryId}," +
-      s"${query.queryEngine},${query.storageFormat},${rs.timing.get.getTiming()}, ${query.dryRun.toString}\n"
+      s"${query.queryEngine},${query.storageFormat},${rs.timing.get.getTiming()}, ${dryRun.toString}\n"
     log.info(s"Result: ${result}")
     val writer = new PrintWriter(new FileOutputStream(new File(logFile),true))
     writer.write(result)
@@ -77,8 +77,7 @@ object QueryExecutorWithLogging {
       queryId = replaceVars(query.queryId),
       queryDesc = replaceVars(query.queryDesc),
       storageFormat = replaceVars(query.storageFormat),
-      statement = replaceVars(query.statement.replaceAll(",",",\n").replaceAll("\\(","\\(  ")),
-      dryRun = ifExplain
+      statement = replaceVars(query.statement.replaceAll(",",",\n").replaceAll("\\(","\\(  "))
     )
   }
 
