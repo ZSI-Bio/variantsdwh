@@ -46,7 +46,7 @@ object QueryExecutorWithLogging {
     val lines = scala.io.Source.fromFile(file).mkString
     val yml = lines.stripMargin.parseYaml
     import QueryYamlProtocol._
-    queryPreprocess(yml.convertTo[Query],storageType,connString, kuduMaster, dbName)
+    queryPreprocess(yml.convertTo[Query], storageType, connString, kuduMaster, dbName, false)
 
   }
 
@@ -61,12 +61,14 @@ object QueryExecutorWithLogging {
     writer.close()
   }
 
-  private def queryPreprocess (query:Query,storageType:String,connString:String, kuduMaster:String, dbName:String) = {
+  private def queryPreprocess(query: Query, storageType: String, connString: String, kuduMaster: String, dbName: String, ifExplain: Boolean) = {
     def replaceVars(property:String) ={
       property
         .replaceAll("\\{\\{DATA_FORMAT\\}\\}",storageType.toLowerCase)
         .replaceAll("\\{\\{DB_NAME\\}\\}",dbName.toLowerCase)
         .replaceAll("\\{\\{KUDU_MASTER\\}\\}",kuduMaster )
+        .replaceAll("\\{\\IF_EXPLAIN\\}\\}", if(ifExplain) "EXPLAIN " else "")
+        .replaceAll("\\{\\PERCENTILE_APPROX\\}\\}", if(query.queryEngine.toLowerCase=="presto") "approx_percentile" else "percentile_approx")
 
     }
     query.copy(
