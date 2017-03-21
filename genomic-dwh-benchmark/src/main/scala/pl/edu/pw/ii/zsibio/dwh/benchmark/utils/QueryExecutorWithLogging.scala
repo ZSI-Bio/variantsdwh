@@ -41,12 +41,12 @@ object QueryExecutorWithLogging {
 
   }
 
-  def parseQueryYAML(file:String,storageType:String,connString:String, kuduMaster:String, dbName:String)  : Query ={
+  def parseQueryYAML(file:String,storageType:String,connString:String, kuduMaster:String, dbName:String, ifExplain:Boolean = false)  : Query ={
     log.info(s"Parsing ${file}")
     val lines = scala.io.Source.fromFile(file).mkString
     val yml = lines.stripMargin.parseYaml
     import QueryYamlProtocol._
-    queryPreprocess(yml.convertTo[Query], storageType, connString, kuduMaster, dbName, false)
+    queryPreprocess(yml.convertTo[Query], storageType, connString, kuduMaster, dbName, ifExplain)
 
   }
 
