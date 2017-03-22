@@ -64,7 +64,15 @@ elif [ "${ENGINE}" = "spark2" ]; then
 java -cp /etc/hive/conf/hive-site.xml:/mnt/hadoop/local/opt/cloudera/parcels/CDH-5.8.2-1.cdh5.8.2.p0.3/lib/hive/lib/hive-service-1.1.0-cdh5.8.2.jar:$DWH_TOOLS -Dconfig.file=${CONF_FILE} pl.edu.pw.ii.zsibio.dwh.benchmark.ExecuteStatement --dbName ${DB_NAME} --useSpark2 --storageType orc --queryDir ${QUERY_DIR} --logFile ${LOG_PATH} ${DRY_RUN}
 
 #spark2-parquet
-java -cp /etc/hive/conf/hive-site.xml:/mnt/hadoop/local/opt/cloudera/parcels/CDH-5.8.2-1.cdh5.8.2.p0.3/lib/hive/lib/hive-service-1.1.0-cdh5.8.2.jar:$DWH_TOOLS -Dconfig.file=${CONF_FILE} pl.edu.pw.ii.zsibio.dwh.benchmark.ExecuteStatement --dbName ${DB_NAME} --useSpark2 --storageType parquet --queryDir ${QUERY_DIR} --logFile ${LOG_PATH} ${DRY_RUN}
+java -cp /etc/hive/conf/hive-site.xml:/mnt/hadoop/local/opt/cloudera/parcels/CDH-5.8.2-1.cdh5.8.2.p0.3/lib/hive/lib/hive-service-1.1.0-cdh5.8.2.jar:$DWH_TOOLS -Dconfig.file=${CONF_FILE} pl.edu.pw.ii.zsibio.dwh.benchmark.ExecuteStatement --dbName ${DB_NAME} --usePresto --storageType parquet --queryDir ${QUERY_DIR} --logFile ${LOG_PATH} ${DRY_RUN}
+
+elif [ "${ENGINE}" = "presto" ]; then
+#presto-orc
+java -cp /etc/hive/conf/hive-site.xml:/mnt/hadoop/local/opt/cloudera/parcels/CDH-5.8.2-1.cdh5.8.2.p0.3/lib/hive/lib/hive-service-1.1.0-cdh5.8.2.jar:$DWH_TOOLS -Dconfig.file=${CONF_FILE} pl.edu.pw.ii.zsibio.dwh.benchmark.ExecuteStatement --dbName ${DB_NAME} --usePresto --storageType orc --queryDir ${QUERY_DIR} --logFile ${LOG_PATH} ${DRY_RUN}
+
+#presto-parquet
+java -cp /etc/hive/conf/hive-site.xml:/mnt/hadoop/local/opt/cloudera/parcels/CDH-5.8.2-1.cdh5.8.2.p0.3/lib/hive/lib/hive-service-1.1.0-cdh5.8.2.jar:$DWH_TOOLS -Dconfig.file=${CONF_FILE} pl.edu.pw.ii.zsibio.dwh.benchmark.ExecuteStatement --dbName ${DB_NAME} --useSpark1 --storageType parquet --queryDir ${QUERY_DIR} --logFile ${LOG_PATH} ${DRY_RUN}
+
 
 elif [ "${ENGINE}" = "impala" ]; then
 #impala-parquet
