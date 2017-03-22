@@ -1,5 +1,5 @@
 ---
-queryId: Q5
+queryId: Q5_{{DATA_FORMAT}}
 
 queryType: SELECT
 
@@ -7,7 +7,7 @@ queryEngine: Hive
 
 storageFormat: "{{DATA_FORMAT}}"
 
-queryDesc: Select count from {{DB_NAME}}.`dim_geography_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format
+queryDesc: All variants from the given genomic interval
 
 statement: "{{IF_EXPLAIN}}  SELECT DISTINCT f_chr,
                                   f_pos,

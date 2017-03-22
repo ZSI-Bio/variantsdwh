@@ -1,5 +1,5 @@
 ---
-queryId: Q6
+queryId: Q6_{{DATA_FORMAT}}
 
 queryType: SELECT
 

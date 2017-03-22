@@ -7,7 +7,7 @@ queryEngine: Hive
 
 storageFormat: "{{DATA_FORMAT}}"
 
-queryDesc: Select count from {{DB_NAME}}.`dim_geography_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format
+queryDesc: Number of variants by chromosome
 
 statement: "{{IF_EXPLAIN}}  SELECT f_chr, COUNT (DISTINCT f_variant_name) FROM {{DB_NAME}}.fact_{{DATA_FORMAT}} GROUP BY f_chr"
 
