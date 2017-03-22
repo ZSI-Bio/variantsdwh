@@ -35,7 +35,8 @@ libraryDependencies ++= Seq(
   "org.apache.kudu" % "kudu-client" % "1.1.0" excludeAll ExclusionRule(organization = "javax.servlet"),
   "org.apache.kudu" % "kudu-spark_2.10" % "1.1.0",
   "org.parboiled" %% "parboiled" % "2.1.3",
-  "com.typesafe" % "config" % "1.3.1"
+  "com.typesafe" % "config" % "1.3.1",
+  "log4j" % "log4j" % "1.2.17"
 )
 
 resolvers += "Apache Repos" at "https://repository.apache.org/content/repositories/releases/"

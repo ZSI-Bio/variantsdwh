@@ -53,6 +53,7 @@ object ExecuteStatement {
     val spark2ConnString = confFile.getString("jdbc.spark2.connection")
     val kuduMaster = confFile.getString("kudu.master.server")
 
+
     val userName = confFile.getString("jdbc.username")
     val password = confFile.getString("jdbc.password")
 
@@ -85,10 +86,13 @@ object ExecuteStatement {
       throw new Exception("Kudu to be used but Impala jdbc or kuduMaster is missing in the conf file")
 
     jdbcConfArray.map( jobConf => {
+
         run(runConf, confFile, jobConf, kuduMaster, userName, password)
+
       }
      )
     }
+
 
   def run(runConf:RunConf, confFile:Config, jobConf:(Driver,String), kuduMaster:String, userName:String, password:String)={
     val conn = new EngineConnection(jobConf._1)
