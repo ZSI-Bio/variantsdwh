@@ -1,0 +1,39 @@
+---
+queryId: Q1A_AGGR_DENORM
+
+queryType: SELECT
+
+queryEngine: Hive
+
+storageFormat: "{{DATA_FORMAT}}"
+
+queryDesc: Select count from {{DB_NAME}}.`dim_geography_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format
+
+statement: "{{IF_EXPLAIN}} SELECT f_chr,
+                  f_pos,
+                  f_alt,
+                  geo_region_name_en,
+                  var_cnt,
+                  f_region_total_samples,
+                  (var_cnt / (2 * f_region_total_samples)) as var_frequency
+           FROM(
+                SELECT  f_chr,
+                        f_pos,
+                        f_alt,
+                        geo_region_name_en,
+                        SUM(genotype_val * f_cnt_alter) as var_cnt,
+                        f_region_total_samples
+                FROM
+                    (SELECT DISTINCT f_chr,
+                                     f_pos,
+                                     f_alt,
+                                     f_d_id,
+                                     f_geo_id,
+                                     geo_region_name_en,
+                                     if(f_genotype='1/1',2,1) as genotype_val,
+                                     f_cnt_alter,
+                                     f_region_total_samples
+                    FROM {{DB_NAME}}.fact_agg_genotypes_counts_dims_{{DATA_FORMAT}}) t
+           GROUP BY f_chr, f_pos, f_alt, geo_region_name_en, f_region_total_samples
+           ) dummy
+          LIMIT 10"

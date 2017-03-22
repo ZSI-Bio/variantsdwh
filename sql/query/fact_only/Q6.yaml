@@ -1,0 +1,13 @@
+---
+queryId: Q6
+
+queryType: SELECT
+
+queryEngine: Hive
+
+storageFormat: "{{DATA_FORMAT}}"
+
+queryDesc: Select count from {{DB_NAME}}.`dim_geography_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format
+
+statement: "{{IF_EXPLAIN}}  SELECT COUNT (*) FROM {{DB_NAME}}.fact_{{DATA_FORMAT}} WHERE f_ref='C' AND f_alt='G' LIMIT 100"
+
