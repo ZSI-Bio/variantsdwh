@@ -1,0 +1,29 @@
+---
+queryId: Q4A_AGGR_DENORM
+
+queryType: SELECT
+
+queryEngine: Hive
+
+storageFormat: "{{DATA_FORMAT}}"
+
+queryDesc: Select count from {{DB_NAME}}.`dim_geography_{{DATA_FORMAT}}` table in {{DATA_FORMAT}} Format
+
+statement: "{{IF_EXPLAIN}}  SELECT gp_trans_id,
+                  Min(avg_total_depth)                     AS min,
+                  AVG (avg_total_depth)  AS average,
+                  Max(avg_total_depth)                     AS max
+           FROM   (SELECT SUM(f_sum_total_depth) / SUM(f_cnt_alter) AS avg_total_depth,
+                          f_chr,
+                          f_pos,
+                          f_ensembl_gp_id
+                   FROM   {{DB_NAME}}.fact_agg_genotypes_counts_dims_{{DATA_FORMAT}}
+                   GROUP  BY f_chr,
+                             f_pos,
+                             f_ensembl_gp_id) facts
+                  RIGHT JOIN {{DB_NAME}}.dim_genomic_position_ensembl_{{DATA_FORMAT}}
+                          ON f_ensembl_gp_id = gp_id
+           GROUP  BY gp_trans_id
+           ORDER  BY gp_trans_id
+           limit 10"
+
