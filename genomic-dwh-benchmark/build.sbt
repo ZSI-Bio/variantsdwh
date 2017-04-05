@@ -29,7 +29,7 @@ libraryDependencies ++= Seq(
   "org.apache.hive" % "hive-jdbc" % "1.1.0-cdh5.8.2" excludeAll ExclusionRule(organization = "javax.servlet"),
   //"org.apache.hive" % "hive-service" % "1.1.0-cdh5.8.2" excludeAll ExclusionRule(organization = "javax.servlet"),
   "org.apache.hadoop" % "hadoop-common" % "2.6.0" excludeAll ExclusionRule(organization = "javax.servlet"),
-  "com.facebook.presto" % "presto-jdbc" % "0.163" excludeAll ExclusionRule(organization = "javax.servlet"),
+  "com.facebook.presto" % "presto-jdbc" % "0.169" excludeAll ExclusionRule(organization = "javax.servlet"),
   "org.apache.logging.log4j" % "log4j-api" % "2.7",
   "net.jcazevedo" %% "moultingyaml" % "0.4.0",
   "org.apache.kudu" % "kudu-client" % "1.1.0" excludeAll ExclusionRule(organization = "javax.servlet"),

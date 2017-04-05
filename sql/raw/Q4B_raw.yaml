@@ -1,0 +1,26 @@
+---
+queryId: Q4B_RAW
+
+queryType: SELECT
+
+queryEngine: Hive
+
+storageFormat: "{{DATA_FORMAT}}"
+
+queryDesc: Q4B_RAW
+
+statement: "{{IF_EXPLAIN}} SELECT gp_trans_id,
+                  gp_exon_num,
+                  min(avg_total_depth) as min,
+                  AVG (avg_total_depth)  AS average,
+                  max(avg_total_depth) as max
+           FROM (SELECT avg(f_total_depth) as avg_total_depth,
+                        f_chr,
+                        f_pos,
+                        f_ensembl_gp_id
+                FROM {{DB_NAME}}.fact_{{DATA_FORMAT}}
+                GROUP BY f_chr, f_pos, f_ensembl_gp_id) facts
+           RIGHT JOIN {{DB_NAME}}.dim_genomic_position_ensembl_{{DATA_FORMAT}} ON f_ensembl_gp_id = gp_id
+           WHERE gp_trans_id = upper('ENST00000424598')
+           GROUP BY gp_trans_id, gp_exon_num
+           ORDER BY gp_exon_num"

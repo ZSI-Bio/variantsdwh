@@ -8,8 +8,7 @@ class ExecutionTiming() {
   var startTime:Long = _
   var endTime:Long = _
 
-  def startTimer() = {startTime = System.currentTimeMillis() }
-  def stopTimer() = {endTime = System.currentTimeMillis() }
-  def getTiming() = endTime - startTime
-
+  def startTimer() = {startTime = System.nanoTime() }
+  def stopTimer() = {endTime = System.nanoTime() }
+  def getTiming() = Math.round((endTime - startTime)/Math.pow(10,6) )
 }

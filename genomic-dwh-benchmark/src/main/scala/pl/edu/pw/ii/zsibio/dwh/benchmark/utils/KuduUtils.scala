@@ -72,10 +72,10 @@ class KuduUtils(kuduMaster:String) {
     if ( ! kuduClient.tableExists(tableName) ) {
       kuduClient.createTable(tableName, schema,tabOpts);
     }
-    else{
-      kuduClient.deleteTable(tableName)
+    /*else{
+      //kuduClient.deleteTable(tableName)
       kuduClient.createTable(tableName, schema,tabOpts);
-    }
+    }*/
 
 
   }
@@ -96,6 +96,7 @@ class KuduUtils(kuduMaster:String) {
     val keyColumns = ddl
       .split("kudu.key_columns")(1)
       .split('=')(1)
+      .replaceAll("\\s", "")
       .replace("'","")
       .replace(")","")
       .trim.split(',')

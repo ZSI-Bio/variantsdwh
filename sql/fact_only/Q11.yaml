@@ -1,0 +1,13 @@
+---
+queryId: Q11
+
+queryType: SELECT
+
+queryEngine: Hive
+
+storageFormat: "{{DATA_FORMAT}}"
+
+queryDesc: Q11
+
+statement: "{{IF_EXPLAIN}}  SELECT COUNT (DISTINCT f_refseq_gp_id) FROM {{DB_NAME}}.fact_{{DATA_FORMAT}} where f_chr = 'chr20' GROUP BY f_sample_id LIMIT 10"
+

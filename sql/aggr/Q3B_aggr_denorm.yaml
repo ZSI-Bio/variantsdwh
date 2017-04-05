@@ -1,0 +1,31 @@
+---
+queryId: Q3B_AGGR_DENORM
+
+queryType: SELECT
+
+queryEngine: Hive
+
+storageFormat: "{{DATA_FORMAT}}"
+
+queryDesc: Q3B_AGGR_DENORM
+
+statement: "{{IF_EXPLAIN}}  SELECT gp_trans_id,
+                  gp_exon_num,
+                  COUNT(DISTINCT f_variant_name) as distinct_variant_cnt,
+                  SUM(var_frequency) as cum_freq
+           FROM (
+           SELECT f_chr,
+                  f_pos,
+                  f_alt,
+                  f_variant_name,
+                  gp_trans_id,
+                  gp_exon_num,
+                  cast(SUM(if(f_genotype='1/1',2,1) * f_cnt_alter) as double) / (2 * f_total_samples) as var_frequency,
+                  d_omim_id
+           FROM {{DB_NAME}}.fact_agg_genotypes_counts_dims_{{DATA_FORMAT}}
+           WHERE v_fathmm_pred = upper('D') and f_ensembl_gp_id IS NOT NULL
+           GROUP BY f_chr, f_pos, f_alt, f_variant_name, gp_trans_id,gp_exon_num, f_total_samples,d_omim_id
+           ) t
+           WHERE var_frequency <= 0.01 AND d_omim_id=upper('OMIM:308230')
+           GROUP BY gp_trans_id,gp_exon_num
+           LIMIT 10"

@@ -104,7 +104,13 @@ class EngineConnection(driver: Driver) {
       case Some(t) => t.startTimer
       case _ => None
     }
+    if(connectDriver == ConnectDriver.HIVE){
+
+      statement.execute("SET mapreduce.map.java.opts=-Xmx3072m")
+      statement.execute("set mapreduce.reduce.java.opts=-Xmx3072m")
+    }
     val resultSet = statement.executeQuery(queryString)
+    while (resultSet.next()){}
     timer match{
       case Some(t) => t.stopTimer
       case _ => None

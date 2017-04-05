@@ -29,5 +29,5 @@ statement: CREATE EXTERNAL TABLE IF NOT EXISTS {{DB_NAME}}.fact_{{DATA_FORMAT}} 
   'storage_handler' = 'com.cloudera.kudu.hive.KuduStorageHandler',
   'kudu.table_name' = 'fact_{{DATA_FORMAT}}',
   'kudu.master_addresses' = '{{KUDU_MASTER}}',
-  'kudu.key_columns' = 'f_sample_id,f_geo_id,f_ensembl_gp_id,f_refseq_gp_id,f_v_id'
+  'kudu.key_columns' = 'f_sample_id,f_d_id,f_geo_id,f_ensembl_gp_id,f_refseq_gp_id,f_v_id'
  )

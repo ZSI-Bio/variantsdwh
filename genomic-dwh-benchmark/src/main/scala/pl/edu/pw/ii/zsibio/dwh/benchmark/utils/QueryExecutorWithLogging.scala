@@ -53,7 +53,7 @@ object QueryExecutorWithLogging {
 
   private def logQuery(conn:EngineConnection, query: Query, logFile:String, dryRun:Boolean) ={
     val rs = conn.executeQuery(query.statement.toLowerCase,true)
-    rs.rs.next()
+    //rs.rs.next()
     val result = s"${Calendar.getInstance().getTime().toString},${query.queryId}," +
       s"${query.queryEngine},${query.storageFormat},${rs.timing.get.getTiming()},${dryRun.toString}\n"
     log.info(s"Result: ${result}")

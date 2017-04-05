@@ -20,13 +20,13 @@ SQL_ROOT=sql/
 CONF_FILE=$PWD/conf/application.conf
 
 #create Impala and Kudu data model
-java -cp $ASSEMBLY_JAR -Dconfig.file=${CONF_FILE}  pl.edu.pw.ii.zsibio.dwh.benchmark.ExecuteStatement --useImpala --queryDir $SQL_ROOT/impala/ddl --storageType kudu --dbName ${DB_NAME}
+java -cp /mnt/hadoop/local/opt/cloudera/parcels/CDH-5.8.2-1.cdh5.8.2.p0.3/lib/hive/lib/hive-service-1.1.0-cdh5.8.2.jar:$ASSEMBLY_JAR -Dconfig.file=${CONF_FILE}  pl.edu.pw.ii.zsibio.dwh.benchmark.ExecuteStatement --useImpala --queryDir $SQL_ROOT/impala/ddl --storageType kudu --dbName ${DB_NAME}
 
 #create Hive data model using Parquet file format
-java -cp $ASSEMBLY_JAR  -Dconfig.file=${CONF_FILE} pl.edu.pw.ii.zsibio.dwh.benchmark.ExecuteStatement --useHive --queryDir $SQL_ROOT/hive/ddl --storageType parquet --dbName ${DB_NAME}
+#java -cp $ASSEMBLY_JAR  -Dconfig.file=${CONF_FILE} pl.edu.pw.ii.zsibio.dwh.benchmark.ExecuteStatement --useHive --queryDir $SQL_ROOT/hive/ddl --storageType parquet --dbName ${DB_NAME}
 
 #create Hive data model using ORC file format
-java -cp $ASSEMBLY_JAR  -Dconfig.file=${CONF_FILE} pl.edu.pw.ii.zsibio.dwh.benchmark.ExecuteStatement --useHive --queryDir $SQL_ROOT/hive/ddl --storageType orc --dbName ${DB_NAME}
+#java -cp $ASSEMBLY_JAR  -Dconfig.file=${CONF_FILE} pl.edu.pw.ii.zsibio.dwh.benchmark.ExecuteStatement --useHive --queryDir $SQL_ROOT/hive/ddl --storageType orc --dbName ${DB_NAME}
 
 #load data into Hive tables
 
