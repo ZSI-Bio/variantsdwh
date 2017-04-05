@@ -1,0 +1,32 @@
+---
+queryId: Q4B_AGGR_DENORM
+
+queryType: SELECT
+
+queryEngine: Hive
+
+storageFormat: "{{DATA_FORMAT}}"
+
+queryDesc: Q4B_AGGR_DENORM
+
+statement: "{{IF_EXPLAIN}}  SELECT gp_trans_id,
+                  gp_exon_num,
+                  Min(avg_total_depth)                     AS min,
+                  AVG (avg_total_depth)  AS average,
+                  Max(avg_total_depth)                     AS max
+           FROM   (SELECT SUM(f_sum_total_depth) / SUM(f_cnt_alter) AS avg_total_depth,
+                          f_chr,
+                          f_pos,
+                          f_ensembl_gp_id,
+                          gp_trans_id,
+                          gp_exon_num
+                   FROM   {{DB_NAME}}.fact_agg_genotypes_counts_dims_{{DATA_FORMAT}}
+                   GROUP  BY f_chr,
+                             f_pos,
+                             f_ensembl_gp_id,
+                             gp_trans_id,
+                             gp_exon_num) facts
+           WHERE  gp_trans_id = upper('ENST00000424598')
+           GROUP  BY gp_trans_id,
+                     gp_exon_num
+           ORDER  BY gp_exon_num"

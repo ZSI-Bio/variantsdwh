@@ -1,0 +1,16 @@
+---
+queryId: Q9
+
+queryType: SELECT
+
+queryEngine: Hive
+
+storageFormat: "{{DATA_FORMAT}}"
+
+queryDesc: Q9
+
+statement: "{{IF_EXPLAIN}} select SUM (hets)/SUM(homs) as het2hom from
+                          (SELECT DISTINCT f_variant_name,
+                          if(f_genotype='1/1',1,0) as homs,
+                          if(f_genotype='1/1',0,1) as hets
+                          FROM {{DB_NAME}}.fact_{{DATA_FORMAT}} WHERE f_chr = concat('chr' ,upper('X')) AND f_sample_id =13685) dummy"

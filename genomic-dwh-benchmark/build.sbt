@@ -26,15 +26,17 @@ libraryDependencies ++= Seq(
   "org.apache.commons" % "commons-lang3" % "3.4",
   "org.apache.commons" % "commons-math3" % "3.5",
   "org.rogach" %% "scallop" % "2.0.6",
-  "org.apache.hive" % "hive-jdbc" % "1.1.0-cdh5.8.0" excludeAll ExclusionRule(organization = "javax.servlet"),
+  "org.apache.hive" % "hive-jdbc" % "1.1.0-cdh5.8.2" excludeAll ExclusionRule(organization = "javax.servlet"),
+  //"org.apache.hive" % "hive-service" % "1.1.0-cdh5.8.2" excludeAll ExclusionRule(organization = "javax.servlet"),
   "org.apache.hadoop" % "hadoop-common" % "2.6.0" excludeAll ExclusionRule(organization = "javax.servlet"),
-  "com.facebook.presto" % "presto-jdbc" % "0.163" excludeAll ExclusionRule(organization = "javax.servlet"),
+  "com.facebook.presto" % "presto-jdbc" % "0.169" excludeAll ExclusionRule(organization = "javax.servlet"),
   "org.apache.logging.log4j" % "log4j-api" % "2.7",
   "net.jcazevedo" %% "moultingyaml" % "0.4.0",
   "org.apache.kudu" % "kudu-client" % "1.1.0" excludeAll ExclusionRule(organization = "javax.servlet"),
   "org.apache.kudu" % "kudu-spark_2.10" % "1.1.0",
   "org.parboiled" %% "parboiled" % "2.1.3",
-  "com.typesafe" % "config" % "1.3.1"
+  "com.typesafe" % "config" % "1.3.1",
+  "log4j" % "log4j" % "1.2.17"
 )
 
 resolvers += "Apache Repos" at "https://repository.apache.org/content/repositories/releases/"

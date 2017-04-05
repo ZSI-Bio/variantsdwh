@@ -1,0 +1,18 @@
+---
+queryId: Q5
+
+queryType: SELECT
+
+queryEngine: Hive
+
+storageFormat: "{{DATA_FORMAT}}"
+
+queryDesc: Q5
+
+statement: "{{IF_EXPLAIN}}  SELECT DISTINCT f_chr,
+                                  f_pos,
+                                  f_alt,
+                                  f_sample_id,
+                                  if(f_genotype='1/1',2,1) as genotype_val
+                         FROM {{DB_NAME}}.fact_{{DATA_FORMAT}} WHERE f_chr = 'chr1' AND f_pos > 1000000 AND f_pos < 2000000 AND f_sample_id =13685 LIMIT 100"
+

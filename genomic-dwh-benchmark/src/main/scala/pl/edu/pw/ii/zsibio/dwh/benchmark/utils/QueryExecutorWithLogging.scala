@@ -14,7 +14,8 @@ import pl.edu.pw.ii.zsibio.dwh.benchmark.utils.QueryType.QueryType
   * Created by marek on 15.01.17.
   */
 
-case class Query(queryId:String, queryType:String, queryEngine:String, storageFormat:String,queryDesc:String, statement:String)
+case class Query(queryId:String, queryType:String, queryEngine:String, storageFormat:String,queryDesc:String,
+                 statement:String)
 
 object QueryType extends Enumeration {
 
@@ -30,30 +31,31 @@ object QueryExecutorWithLogging {
   }
 
 
-  def runStatement(query: Query, conn:EngineConnection, logFile:String) = {
+  def runStatement(query: Query, conn:EngineConnection, logFile:String, dryRun: Boolean) = {
     log.info(s"Running ${query.queryId} ... using ${query.queryEngine} engine")
     log.debug(s"Executing query: ${query.statement}")
     query.queryType.toLowerCase() match {
-      case "select" => logQuery(conn, query, logFile)
+      case "select" => logQuery(conn, query, logFile, dryRun)
       case _ => conn.executeUpdate(query.statement.toLowerCase)
     }
 
 
   }
 
-  def parseQueryYAML(file:String,storageType:String,connString:String, kuduMaster:String, dbName:String)  : Query ={
+  def parseQueryYAML(file:String,storageType:String,connString:String, kuduMaster:String, dbName:String, ifExplain:Boolean = false)  : Query ={
     log.info(s"Parsing ${file}")
     val lines = scala.io.Source.fromFile(file).mkString
     val yml = lines.stripMargin.parseYaml
     import QueryYamlProtocol._
-    queryPreprocess(yml.convertTo[Query],storageType,connString, kuduMaster, dbName)
+    queryPreprocess(yml.convertTo[Query], storageType, connString, kuduMaster, dbName, ifExplain)
 
   }
 
-  private def logQuery(conn:EngineConnection, query: Query, logFile:String) ={
+  private def logQuery(conn:EngineConnection, query: Query, logFile:String, dryRun:Boolean) ={
     val rs = conn.executeQuery(query.statement.toLowerCase,true)
-    rs.rs.next()
-    val result = s"${Calendar.getInstance().getTime().toString},${query.queryId},${query.queryEngine},${query.storageFormat},${rs.timing.get.getTiming()}\n"
+    //rs.rs.next()
+    val result = s"${Calendar.getInstance().getTime().toString},${query.queryId}," +
+      s"${query.queryEngine},${query.storageFormat},${rs.timing.get.getTiming()},${dryRun.toString}\n"
     log.info(s"Result: ${result}")
     val writer = new PrintWriter(new FileOutputStream(new File(logFile),true))
     writer.write(result)
@@ -61,12 +63,14 @@ object QueryExecutorWithLogging {
     writer.close()
   }
 
-  private def queryPreprocess (query:Query,storageType:String,connString:String, kuduMaster:String, dbName:String) = {
+  private def queryPreprocess(query: Query, storageType: String, connString: String, kuduMaster: String, dbName: String, ifExplain: Boolean) = {
     def replaceVars(property:String) ={
       property
         .replaceAll("\\{\\{DATA_FORMAT\\}\\}",storageType.toLowerCase)
         .replaceAll("\\{\\{DB_NAME\\}\\}",dbName.toLowerCase)
         .replaceAll("\\{\\{KUDU_MASTER\\}\\}",kuduMaster )
+        .replaceAll("\\{\\{IF_EXPLAIN\\}\\}", if(ifExplain) "EXPLAIN " else "")
+        .replaceAll("\\{\\{PERCENTILE_APPROX\\}\\}", if(query.queryEngine.toLowerCase=="presto") "approx_percentile" else "percentile_approx")
 
     }
     query.copy(

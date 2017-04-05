@@ -19,12 +19,16 @@ object GenerateDataJob {
     banner("Usage: spark-submit <spark-options> pl.edu.pw.elka.GenerateDataJob -a [AnnotationTable]" +
       " -d <CountryDictionaryPath> -s <SamplesNumber> -o <OutputPath>")
 
-    val annotationsTable = opt[String](required = false, default = Some("ANNOTATIONS"), descr = "Name of table in " +
+    val annotationsTable = opt[String](required = false, default = Some("ANNOTATIONS"), descr = "Name of a table in " +
       "hive that contains dbNSFP annotations.")
-    val dictPath = opt[String](required = true, descr = "Path to dictionary of countries with their population for " +
+    val countryPopulation = opt[String](required = true, descr = "Name of a table with their population for " +
       "generating samples.")
-    val outputTable = opt[String](required = true, descr = "Table name where to store generated variants.")
-    val samplesNumber = opt[Int](required = true, descr = "Number of samples to generate.")
+    val tempTable = opt[String](required = true, descr = "Temp table name where to store generated variants.")
+   /* val factTable = opt[String](required = true, descr = "Fact table with all dim ids to store generated variants.")
+    val dimVariantPredictions = opt[String](required = true, descr = "dim_variant_predictions table.")
+    val dimGenomicPostionEnembl = opt[String](required = true, descr = "dim_genomic_position_ensembl.")
+    val dimGenomicPostionRefseq = opt[String](required = true, descr = "dim_genomic_position_refseq.")
+  */  val samplesNumber = opt[Int](required = true, descr = "Number of samples to generate.")
     val outputPartitions = opt[Int](required = false, descr = "Number of output partitions.", default = Some(1000))
     val samplesPartitions = opt[Int](required = false, descr = "Number of partitions for samples.", default = Some(141))
     val annotationsPartitions = opt[Int](required = false, descr = "Number of partitions for annotations.", default =
@@ -33,6 +37,7 @@ object GenerateDataJob {
 
   def main(args: Array[String]) {
     val params = new Conf(args)
+    params.verify()
 
     val sparkConf = new SparkConf().setAppName("Generate random variants")
     val sc = new SparkContext(sparkConf)
@@ -41,7 +46,7 @@ object GenerateDataJob {
     val annotations = readAnnotations(sqlContext, params.annotationsTable())
 
     import sqlContext.implicits._
-    new SamplesGenerator(new GenerationConfiguration(params.dictPath()))
+    new SamplesGenerator(new GenerationConfiguration(params.countryPopulation()))
       .generate(sc, params.samplesNumber()).toDF().registerTempTable("samples")
 
     sqlContext.sql("CREATE TABLE samplesTemp STORED AS ORC AS SELECT * FROM samples")
@@ -59,12 +64,41 @@ object GenerateDataJob {
 
     val m = DataGenerator.generate(samCached
       , annCached)
-      .repartition(params.outputPartitions())
+      //.repartition(params.outputPartitions())
 
     m.toDF().registerTempTable("resultTemp")
 
-    sqlContext.sql(s"CREATE TABLE ${params.outputTable()} STORED AS ORC AS SELECT * FROM resultTemp")
+    sqlContext.sql(s"CREATE TABLE ${params.tempTable()} STORED AS ORC AS SELECT * FROM resultTemp")
     sqlContext.sql("DROP TABLE samplesTemp")
+    /* load fact_table*/
+    /*sqlContext.sql(
+      s"""
+         |INSERT OVERWRITE TABLE ${params.factTable}
+         |SELECT
+         |f_sample_id,
+         |f_geo_id,
+         |f_d_id,
+         |f_ensembl_gp_id,
+         |f_refseq_gp_id,
+         |f_v_id,
+         |f_variant_name,
+         |'chr'||f_chr,
+         |f_pos,
+         |f_ref,
+         |f_alt,
+         |f_alter_depth,
+         |f_total_depth,
+         |f_genotype,
+         |FROM
+         |${params.tempTable()} t
+         |JOIN
+         |${params.dimGenomicPostionEnembl} dge ON ('chr'||t.f_chr=dge.f_chr AND t.f_pos=dge.f_pos)
+         |JOIN
+         |${params.dimGenomicPostionRefseq} dgr ON ('chr'||t.f_chr=dgr.f_chr AND t.f_pos=dgr.f_pos)
+         |JOIN
+         |${params.dimVariantPredictions} dv ON (t.f_chr=dv.v_chr AND t.f_pos=dv.v_pos AND t.f_alt = dv.v_alt)
+       """.stripMargin)*/
+
     sc.stop()
 
   }
@@ -72,24 +106,24 @@ object GenerateDataJob {
 
   def readAnnotations(sqlContext: HiveContext, annotationsTable: String): RDD[Map[String, Any]] = {
     sqlContext.sql(
-      s"""SELECT REFERENCE
-              , ALTERNATIVE
+      s"""SELECT ref as REFERENCE
+              , alt as ALTERNATIVE
               , HG19_CHR
-              , HG19_POS
-              , MEAN
-              , EXAC_AMR_AF
-              , EXAC_NFE_AF
-              , EXAC_FIN_AF
-              , EXAC_SAS_AF
-              , EXAC_EAS_AF
-              , EXAC_AFR_AF
+              , `hg19_pos(1-based)` as HG19_POS
+              , 10.0 as `MEAN`
+                       , CAST(EXAC_AMR_AF as DOUBLE)
+         |              , CAST(EXAC_NFE_AF as DOUBLE)
+         |              , CAST(EXAC_FIN_AF as DOUBLE)
+         |              , CAST(EXAC_SAS_AF as DOUBLE)
+         |              , CAST(EXAC_EAS_AF as DOUBLE)
+         |              , CAST(EXAC_AFR_AF as DOUBLE)
         FROM $annotationsTable
-        WHERE EXAC_AMR_AF IS NOT NULL AND
-              EXAC_NFE_AF IS NOT NULL AND
-              EXAC_FIN_AF IS NOT NULL AND
-              EXAC_SAS_AF IS NOT NULL AND
-              EXAC_EAS_AF IS NOT NULL AND
-              EXAC_AFR_AF IS NOT NULL""")
+        WHERE EXAC_AMR_AF IS NOT NULL AND EXAC_AMR_AF <> '.' AND
+              EXAC_NFE_AF IS NOT NULL AND EXAC_NFE_AF <> '.' AND
+              EXAC_FIN_AF IS NOT NULL AND EXAC_FIN_AF <> '.' AND
+              EXAC_SAS_AF IS NOT NULL AND EXAC_SAS_AF <> '.' AND
+              EXAC_EAS_AF IS NOT NULL AND EXAC_EAS_AF <> '.' AND
+              EXAC_AFR_AF IS NOT NULL AND EXAC_AFR_AF <> '.' """.stripMargin)
       .map(_.getValuesMap[Any](Seq("REFERENCE"
         , "ALTERNATIVE"
         , "HG19_CHR"
